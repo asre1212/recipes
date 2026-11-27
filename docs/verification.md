@@ -126,3 +126,11 @@ a complete update. This does not touch IndexedDB owner records or settings.
 ## Header wordmark removal
 
 Inspected the owner's full-size IMG_3772.jpeg: the indicated item is the blue `recipe.` header wordmark on the cover, not stored recipe content. Removed that visible wordmark from the shared header and retained return-to-cover navigation as Cover inside the existing menu. The menu remains at the right; recipe data, trial history, font preferences and cover artwork are unchanged.
+
+## Compact Contents and removed tagline
+
+- Inspected IMG_3773.jpeg at full size. The screenshot shows the Contents front matter, subtitle, reorder control and first section header, rather than the open menu. Condensed only the Contents screen: its header, heading/reorder row, section headings, empty-section notes, recipe rows and reorder panel. Removed “A few good things, worth making again.” and its paragraph. The removed wordmark remains absent; recipe text/data, cover, menu and recipe-page styling are unchanged.
+- Retained 44px recipe-link heights and 44px drag handle widths/heights, with minimum 44px Up/Down buttons. Smaller 14px entry text, compact headings and reduced noninteractive margins preserve long-title wrapping and separate page-number alignment.
+- Compared the old 9a5a6a0 layout with the new layout using the same 28-entry temporary local test library. At 390px frame width (375px excluding scrollbar), book height fell from 2337px to 1686px (27.9%); first section top from 337px to 135px. Fully visible recipe rows increased from 4 to 11. At 320px (305px excluding scrollbar), book height fell from 2409px to 1686px (30.0%); first section top from 363px to 135px, visible rows from 3 to 11. Both widths had no horizontal overflow or title/page-number overlap. Minimum link height was 44px.
+- Browser tests at 320px: dragged a whole section using its handle, checked new order/page 03, undid it, used Enter on a section move control, cancelled layout changes, moved Crab Cakes up via keyboard, cancelled, navigated the long Copycat Mary O’s Irish Soda Bread Scones title and returned via the footer Contents link. No test order changes were retained.
+- Physical iPhone/Safari is unavailable; phone-width Chrome comparison and pointer/keyboard interactions were tested. Private baseline/comparison files are outside the deployed public source.

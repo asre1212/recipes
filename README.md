@@ -55,3 +55,13 @@ Add named top-level sections or Main cuisine subsections in reorder mode. A none
 Section definitions are stored in the versioned local settings store, seeded only when absent. Existing custom categories/cuisines from older versions migrate into the first section layout. Intentionally removed defaults are not recreated by bundle updates. Layout/category/order changes are local overrides. Backups include section definitions, stable section IDs and per-recipe book ordering; restoring a section layout requires its own visible checkbox in the checked restore preview. Older version-1 backups without layout metadata remain compatible.
 
 The detail sheet now follows the approved written recipe card using bundled local fonts; the cover uses a fresh reference-matched bear vector. The mobile app fills the dynamic viewport with safe-area padding for controls. Normal Safari browser chrome remains controlled by Safari; Home Screen standalone display is declared in the manifest. Zoom is not disabled.
+
+## Prior Trials and the student notebook style
+
+Every recipe page uses a locally bundled Patrick Hand print font on lined ivory paper, restrained yellow highlighter, red circled step numbers and pen underlines. The three graphite food drawings remain occasional. Cover and contents retain their existing styling.
+
+Use **Add a trial** at the bottom of any recipe page. Ingredient / amount and Outcome are separate free-text fields; multiple trials can be edited or removed. Trials are device-local and included in plain and encrypted backups. Recipe editing, section moves, bundle updates and restoring the original recipe text preserve trial history. Old records/backups without a trials field load with an empty history. No example trials are added to supplied recipe data.
+
+The full existing bear on the cover is the Contents link, accessible by pointer or keyboard. Visible cover title/link copy has been removed. The versioned PWA, Apple touch and favicon assets crop only that same bear artwork's face, on ivory with safe padding. No new bear was drawn, and no raw reference photo was published. Physical iOS Home Screen icon refresh is unverified; code updates preserve local data and do not require clearing website storage.
+
+Font: Patrick Hand from the official Google Fonts repository, bundled under OFL; see `public/assets/fonts/PATRICK-HAND-OFL.txt`.

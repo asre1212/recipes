@@ -23,7 +23,7 @@ export async function initializeLibrary(bundled){
 export async function loadLibrary(bundledOrder=[]){
  const db=await openDatabase();const records=await result(db.transaction('recipes').objectStore('recipes').getAll());
  const order=new Map(bundledOrder.map((id,index)=>[id,index]));
- return records.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999)||a.updatedAt.localeCompare(b.updatedAt)).map(record=>({...record.recipe,local:record.origin==='local',overridden:record.modified}));
+ return records.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999)||a.updatedAt.localeCompare(b.updatedAt)).map(record=>({...record.recipe,trials:record.recipe.trials||[],local:record.origin==='local',overridden:record.modified}));
 }
 export async function saveRecipe(recipe){
  await transaction('recipes','readwrite',store=>store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA}));
@@ -45,10 +45,11 @@ export function validateBackup(value){
  for(const r of value.recipes){
   if(!r||!text(r.id,150)||!/^[a-z0-9-]+$/.test(r.id)||ids.has(r.id)||!text(r.title,300)||!r.title.trim()||!text(r.category,100)||!r.category.trim()||!ingredients(r.ingredients)||!Array.isArray(r.steps)||r.steps.length>500||!r.steps.every(v=>text(v))||!Array.isArray(r.notes)||!r.notes.every(v=>text(v))||r.cuisine!=null&&!text(r.cuisine,100)||r.unspecified!=null&&!text(r.unspecified))throw Error('A recipe in this backup is invalid or duplicated. No data was changed.');
   if(r.components!=null&&(!Array.isArray(r.components)||r.components.length>50||!r.components.every(c=>text(c.title,300)&&ingredients(c.ingredients)&&(!c.steps||Array.isArray(c.steps)&&c.steps.every(v=>text(v))))))throw Error('Invalid recipe component. No data was changed.');
+  if(r.trials!=null&&(!Array.isArray(r.trials)||r.trials.length>100||r.trials.some(t=>!t||!text(t.id,150)||!/^[a-z0-9-]+$/.test(t.id)||!text(t.ingredient,5000)||!t.ingredient.trim()||!text(t.outcome,20000)||!t.outcome.trim())||new Set(r.trials.map(t=>t.id)).size!==r.trials.length))throw Error('Invalid or duplicated Prior Trials entry. No data was changed.');
   ids.add(r.id);
  }
  // Only accept known content fields; discard imported asset paths and metadata.
- return value.recipes.map(r=>({id:r.id,title:r.title,category:r.category,cuisine:r.cuisine||null,ingredients:r.ingredients,steps:r.steps,notes:r.notes,unspecified:r.unspecified||'',components:r.components||[],source:text(r.source,300)?r.source:'Restored backup',...(text(r.sectionId,100)&&/^[a-z0-9-]+$/.test(r.sectionId)?{sectionId:r.sectionId}:{}),...(Number.isFinite(r.bookOrder)?{bookOrder:r.bookOrder}:{})}));
+ return value.recipes.map(r=>({id:r.id,title:r.title,category:r.category,cuisine:r.cuisine||null,ingredients:r.ingredients,steps:r.steps,notes:r.notes,trials:(r.trials||[]).map(t=>({id:t.id,ingredient:t.ingredient,outcome:t.outcome})),unspecified:r.unspecified||'',components:r.components||[],source:text(r.source,300)?r.source:'Restored backup',...(text(r.sectionId,100)&&/^[a-z0-9-]+$/.test(r.sectionId)?{sectionId:r.sectionId}:{}),...(Number.isFinite(r.bookOrder)?{bookOrder:r.bookOrder}:{})}));
 }
 export function makeBackup(recipes,sections){return {format:'recipe-notebook',version:1,createdAt:new Date().toISOString(),recipes,...(sections?{sections:validateSections(sections)}:{})};}
 export function previewMerge(current,incoming,policy){
@@ -56,7 +57,7 @@ export function previewMerge(current,incoming,policy){
  return incoming.map(recipe=>{const match=byId.get(recipe.id)||titles.get(recipe.title.trim().toLowerCase());return {recipe,match,action:!match?'add':policy==='replace'?'replace':policy==='copy'?'copy':'skip'};});
 }
 
-export async function resetRecipe(recipe){await transaction('recipes','readwrite',store=>store.put({id:recipe.id,origin:'bundled',modified:false,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA}));}
+export async function resetRecipe(recipe){const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction('recipes','readwrite');const store=tx.objectStore('recipes');const request=store.get(recipe.id);request.onsuccess=()=>{const trials=request.result?.recipe.trials||[];store.put({id:recipe.id,origin:'bundled',modified:Boolean(trials.length),recipe:{...recipe,trials},updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}
 
 export function orderRecipes(recipes){
  const chapters=['Main','Sides','Desserts'];

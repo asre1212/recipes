@@ -7,6 +7,7 @@ const ingredients=value=>lines(value).map(line=>{const split=line.indexOf('|');r
 let draft=false;
 export const hasDraft=()=>draft;
 export const discardDraft=()=>{draft=false;};
+export const markDraft=()=>{draft=true;};
 export function editorPage(recipe,sections=defaultSections){
  const roots=sections.filter(s=>!s.parentId);
  recipe=recipe||null;
@@ -17,7 +18,7 @@ export function bindEditor(recipe,onSaved,sections=defaultSections){
  form.addEventListener('input',()=>{draft=true;});
  form.elements.category.addEventListener('change',()=>{document.querySelector('#cuisine-field').hidden=form.elements.category.value!=='Main';});
  form.addEventListener('submit',async e=>{e.preventDefault();const button=form.querySelector('[type=submit]');button.disabled=true;
- const data=new FormData(form);const value={id:recipe?.id||'local-'+crypto.randomUUID(),title:data.get('title').trim(),category:data.get('category'),cuisine:data.get('category')==='Main'?(data.get('cuisine').trim()||'Other'):null,ingredients:ingredients(data.get('ingredients')),steps:lines(data.get('steps')),notes:lines(data.get('notes')),unspecified:data.get('unspecified').trim(),source:recipe?.source||'Your notebook',bookOrder:recipe?.bookOrder??Date.now(),...(recipe?.illustration?{illustration:recipe.illustration,illustrationAlt:recipe.illustrationAlt}:{}),components:(recipe?.components||[]).map((c,index)=>({title:c.title,ingredients:ingredients(data.get('component-ingredients-'+index)),steps:lines(data.get('component-steps-'+index))}))};
+ const data=new FormData(form);const value={id:recipe?.id||'local-'+crypto.randomUUID(),title:data.get('title').trim(),category:data.get('category'),cuisine:data.get('category')==='Main'?(data.get('cuisine').trim()||'Other'):null,ingredients:ingredients(data.get('ingredients')),steps:lines(data.get('steps')),notes:lines(data.get('notes')),unspecified:data.get('unspecified').trim(),source:recipe?.source||'Your notebook',trials:recipe?.trials||[],bookOrder:recipe?.bookOrder??Date.now(),...(recipe?.illustration?{illustration:recipe.illustration,illustrationAlt:recipe.illustrationAlt}:{}),components:(recipe?.components||[]).map((c,index)=>({title:c.title,ingredients:ingredients(data.get('component-ingredients-'+index)),steps:lines(data.get('component-steps-'+index))}))};
  const parent=sections.find(s=>!s.parentId&&s.name===value.category);const child=value.cuisine&&sections.find(s=>s.parentId===parent?.id&&s.name===value.cuisine);if(value.cuisine&&!child){document.querySelector('#form-status').textContent='Add that cuisine subsection in Contents first, or choose an existing cuisine.';button.disabled=false;return;}value.sectionId=child?.id||parent?.id;
  if(!value.title||!value.ingredients.length){document.querySelector('#form-status').textContent='Add a title and at least one ingredient.';button.disabled=false;return;}
  try{await saveRecipe(value);draft=false;await onSaved(value.id);}catch{document.querySelector('#form-status').textContent='Could not save on this device. Your draft is still here; check browser storage availability and try again.';button.disabled=false;}

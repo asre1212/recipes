@@ -61,3 +61,28 @@ html[data-recipe-font="kristi"] .recipe .ingredients ul{font-size:32px}html[data
 .recipe .recipe-grid>.art-tower:has(.companion-sketch){grid-template-rows:calc(var(--side-art) * .8) calc(var(--side-art) * 1.34)}
 .recipe .art-tower:has(.companion-sketch) .dish-sketch{width:calc(var(--side-art) * .78);height:calc(var(--side-art) * 1.17);margin-right:calc(var(--side-art) * .14);align-self:center;transform:rotate(15deg)}
 .recipe .art-tower .companion-sketch{margin-left:calc(var(--side-art) * .08);align-self:center;transform:rotate(-15deg)}
+
+/* Shortbread only: raise the art and shorten the real gap before Margin Notes. */
+.recipe .recipe-grid.sketch-next-right:has(.art-tower .companion-sketch){row-gap:4px}
+.recipe .recipe-grid>.art-tower:has(.companion-sketch){margin-top:37px}
+
+/* Contents ink follows a 22px ruling; touch and drag areas remain at least 44px. */
+.paper.contents{--toc-left-rule:42px;--toc-right-rule:44px;background-image:linear-gradient(90deg,transparent var(--toc-left-rule),#d8887366 var(--toc-left-rule),#d8887366 var(--toc-right-rule),transparent var(--toc-right-rule)),repeating-linear-gradient(to bottom,#cbd9df80 0,#cbd9df80 .7px,transparent .7px,transparent 22px);background-position:0 0,0 var(--toc-rule-phase,0px)}
+.contents .toc-ink{display:inline-block;line-height:22px;vertical-align:baseline}
+.contents .toc-front .eyebrow{line-height:22px;margin:0}
+.contents .toc-list{margin-top:0}.contents .toc-section{margin-bottom:0}
+.contents .toc-heading{border-bottom:0;margin:0;min-height:22px;padding:0}
+.contents .toc-heading h2{font-size:22px;line-height:22px;margin:0}
+.contents .toc-subheading{margin:0;min-height:22px}.contents .toc-subheading h3{line-height:22px;margin:0}
+.contents .toc-entry{line-height:22px;padding:0;min-height:44px;align-items:center}
+.contents .toc-entry .toc-ink{line-height:22px}.contents .toc-rule{align-self:center}
+.contents .section-recipes .empty{line-height:22px;margin:0}
+.contents .hand-note{line-height:22px;margin:0}
+@media(max-width:600px){.paper.contents{--toc-left-rule:19px;--toc-right-rule:20px}}
+.contents .section-recipes:has(>ol:empty):not(:has(.toc-drop-zone)):not(:has(.empty)){display:none}
+
+.paper.contents{background-size:auto,100% 22px}
+
+.contents .toc-status{line-height:22px;margin:0}
+
+.contents .section-order-controls:has([data-remove-section]){flex-wrap:wrap;max-width:calc(100% - 60px)}

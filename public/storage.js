@@ -1,12 +1,13 @@
+import {legacySeedIds} from './seed-history.js';
 import {validateSections,migrateSectionDefaults,adoptLegacySections} from './sections.js';
 export const DATA_SCHEMA = 1;
 const DB_NAME = 'recipe-personal-notebook';
-let database;
+let database;let freshDatabase=false;
 const result = request => new Promise((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
 export async function openDatabase(){
  if(database)return database;
  const request=indexedDB.open(DB_NAME,1);
- request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains('recipes'))db.createObjectStore('recipes',{keyPath:'id'});if(!db.objectStoreNames.contains('settings'))db.createObjectStore('settings');};
+ request.onupgradeneeded=event=>{freshDatabase=event.oldVersion===0;const db=request.result;if(!db.objectStoreNames.contains('recipes'))db.createObjectStore('recipes',{keyPath:'id'});if(!db.objectStoreNames.contains('settings'))db.createObjectStore('settings');};
  database=await result(request);database.onversionchange=()=>{database.close();database=null;};return database;
 }
 async function transaction(storeName,mode,operation){
@@ -17,13 +18,14 @@ export async function initializeLibrary(bundled){
  const db=await openDatabase();
  const records=await result(db.transaction('recipes').objectStore('recipes').getAll());
  const existing=new Map(records.map(r=>[r.id,r]));
- await new Promise((resolve,reject)=>{const tx=db.transaction('recipes','readwrite');const store=tx.objectStore('recipes');for(const recipe of bundled){const prior=existing.get(recipe.id);if(!prior||prior.origin==='bundled'&&!prior.modified)store.put({id:recipe.id,origin:'bundled',modified:false,recipe,updatedAt:prior?.updatedAt||new Date().toISOString(),schema:DATA_SCHEMA});}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});
+ const seeded=await getSetting('seededRecipeIds',freshDatabase?[]:legacySeedIds),known=new Set(seeded);
+ await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite'),store=tx.objectStore('recipes');for(const recipe of bundled){const prior=existing.get(recipe.id);if(prior?.deleted||prior?.origin==='deleted')continue;if(!prior&&!known.has(recipe.id)&&records.some(r=>!r.deleted&&r.origin!=='deleted'&&r.recipe?.title?.trim().toLocaleLowerCase('en')===recipe.title.trim().toLocaleLowerCase('en')))continue;if(!prior&&!known.has(recipe.id)||prior?.origin==='bundled'&&!prior.modified)store.put({id:recipe.id,origin:'bundled',modified:false,recipe,updatedAt:prior?.updatedAt||new Date().toISOString(),schema:DATA_SCHEMA});}tx.objectStore('settings').put([...new Set([...seeded,...bundled.map(r=>r.id)])],'seededRecipeIds');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});freshDatabase=false;
  return loadLibrary(bundled.map(r=>r.id));
 }
 export async function loadLibrary(bundledOrder=[]){
  const db=await openDatabase();const records=await result(db.transaction('recipes').objectStore('recipes').getAll());
  const order=new Map(bundledOrder.map((id,index)=>[id,index]));
- return records.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999)||a.updatedAt.localeCompare(b.updatedAt)).map(record=>({...record.recipe,trials:record.recipe.trials||[],local:record.origin==='local',overridden:record.modified}));
+ return records.filter(r=>!r.deleted&&r.origin!=='deleted'&&r.recipe).sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999)||a.updatedAt.localeCompare(b.updatedAt)).map(record=>({...record.recipe,trials:record.recipe.trials||[],local:record.origin==='local',overridden:record.modified}));
 }
 const saveListeners=new Set();
 export const onNotebookSave=listener=>{saveListeners.add(listener);return ()=>saveListeners.delete(listener);};
@@ -72,9 +74,9 @@ export function orderRecipes(recipes){
 
 export async function initializeSections(recipes){
  const db=await openDatabase();let sections;
- await new Promise((resolve,reject)=>{const tx=db.transaction('settings','readwrite');const settings=tx.objectStore('settings');const saved=settings.get('sections');const version=settings.get('sectionOrderVersion');let pending=2;
- const ready=()=>{if(--pending)return;try{sections=validateSections(migrateSectionDefaults(saved.result||adoptLegacySections(recipes),version.result));settings.put(sections,'sections');settings.put(2,'sectionOrderVersion');}catch(error){tx.abort();reject(error);}};
- saved.onsuccess=ready;version.onsuccess=ready;tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Section migration was not saved.'));
+ await new Promise((resolve,reject)=>{const tx=db.transaction('settings','readwrite');const settings=tx.objectStore('settings');const saved=settings.get('sections');const version=settings.get('sectionOrderVersion'),contentVersion=settings.get('contentSectionVersion');let pending=3;
+ const ready=()=>{if(--pending)return;try{sections=validateSections(migrateSectionDefaults(saved.result||adoptLegacySections(recipes),version.result));if(!contentVersion.result){const main=sections.find(s=>s.id==='main'&&!s.parentId);if(main&&!sections.some(s=>s.parentId===main.id&&s.name==='Italian'))sections.push({id:sections.some(s=>s.id==='main-italian')?'seed-italian-v1':'main-italian',name:'Italian',parentId:main.id});settings.put(1,'contentSectionVersion');}settings.put(sections,'sections');settings.put(2,'sectionOrderVersion');}catch(error){tx.abort();reject(error);}};
+ saved.onsuccess=ready;version.onsuccess=ready;contentVersion.onsuccess=ready;tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Section migration was not saved.'));
  });return sections;
 }
 

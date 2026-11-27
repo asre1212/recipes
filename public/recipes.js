@@ -1611,5 +1611,139 @@ export const recipes = [
     "notes": [],
     "unspecified": "Base quantities, crust amount/type and pan size are not specified.",
     "components": []
+  },
+  {
+    "id": "lentil-dosa",
+    "title": "Lentil Dosa",
+    "category": "Main",
+    "cuisine": "Indian",
+    "source": "6C7EC401-6A02-4A44-8A74-F0E5F9D47362.png",
+    "ingredients": [
+      [
+        "1 cup",
+        "red lentils (masoor dal), soaked for 2–3 hours"
+      ],
+      [
+        "2 tbsp",
+        "rice flour (up to ½ cup depending on crispness)"
+      ],
+      [
+        "½ inch",
+        "fresh ginger, grated or chopped"
+      ],
+      [
+        "1–2",
+        "green chilies"
+      ],
+      [
+        "½ tsp",
+        "cumin seeds (optional)"
+      ],
+      [
+        "To taste",
+        "salt"
+      ],
+      [
+        "About ½–¾ cup",
+        "water, as needed for blending"
+      ],
+      [
+        "",
+        "oil or ghee, for cooking the dosas"
+      ]
+    ],
+    "steps": [
+      "Rinse the red lentils and soak in plenty of water for 2–3 hours until softened, then drain completely."
+    ],
+    "notes": [
+      "No overnight fermentation.",
+      "Blending and cooking steps need confirmation."
+    ],
+    "unspecified": "Blending and cooking instructions need confirmation.",
+    "components": []
+  },
+  {
+    "id": "bolognese",
+    "title": "Bolognese",
+    "category": "Main",
+    "cuisine": "Italian",
+    "source": "IMG_0379.png + IMG_0380.png",
+    "ingredients": [
+      [
+        "1 medium",
+        "onion, chopped"
+      ],
+      [
+        "1",
+        "celery stalk, chopped"
+      ],
+      [
+        "1 small",
+        "carrot, peeled and chopped"
+      ],
+      [
+        "3 tbsp",
+        "extra-virgin olive oil"
+      ],
+      [
+        "1 lb",
+        "ground beef chuck (20% fat), patted dry"
+      ],
+      [
+        "",
+        "kosher salt"
+      ],
+      [
+        "3 oz",
+        "thinly sliced pancetta, finely chopped"
+      ],
+      [
+        "1 cup",
+        "dry white wine"
+      ],
+      [
+        "⅓ cup",
+        "tomato paste"
+      ],
+      [
+        "1",
+        "bay leaf"
+      ],
+      [
+        "Pinch",
+        "finely grated nutmeg"
+      ],
+      [
+        "2 cups or more",
+        "homemade chicken stock or low-sodium chicken broth"
+      ],
+      [
+        "1 cup",
+        "whole milk"
+      ],
+      [
+        "1 lb",
+        "fresh tagliatelle or pappardelle, or dry rigatoni"
+      ],
+      [
+        "2 oz (about ½ cup)",
+        "finely grated Parmesan, plus more for serving"
+      ]
+    ],
+    "steps": [
+      "Pulse the onion, celery and carrot in a food processor until very finely chopped. Transfer to a small bowl.",
+      "Heat the olive oil in a Dutch oven or other large pot over medium heat. Break the beef into small clumps, about 1½ inches, and add to the pot; season lightly with kosher salt. Cook 6–8 minutes, stirring occasionally without breaking the meat apart, until lightly browned but not crisp. Gray spots and a slightly pink center are okay at this stage. Transfer the beef to a medium bowl with a slotted spoon.",
+      "Wipe out the pot. Cook the pancetta in the same pot over medium heat, stirring occasionally, until it releases some fat and is crisp, 6–8 minutes. Add the reserved onion mixture and cook, stirring occasionally, until very soft and beginning to stick to the pot, 6–8 minutes.",
+      "Return the beef to the pot and add the white wine. Reduce heat to medium-low. Cook 12–15 minutes, smashing the beef with a wooden spoon, until the wine has evaporated, the pot surface is almost dry and the meat is very finely ground. Add the tomato paste, bay leaf and nutmeg. Cook about 5 minutes, stirring occasionally and still pressing the meat, until the tomato paste is slightly darkened.",
+      "Add 2 cups stock or broth, the milk and a pinch of kosher salt. Reduce heat to the lowest setting and cook uncovered for 2–2½ hours, stirring occasionally, until the meat is very tender. There should be only an occasional small bubble, not rapid bubbling. The finished sauce should look like a sloppy joe mixture. If the liquid reduces before the meat is tender, add another ½ cup stock and keep cooking. Discard the bay leaf. Taste, adjust salt and keep warm.",
+      "Cook the pasta in a large pot of boiling salted water. Cook fresh pasta about 3 minutes; cook dry pasta until very al dente, about 2 minutes less than the package directions.",
+      "Transfer the cooked pasta to the sauce with tongs. Add 1 cup pasta cooking liquid and 2 oz Parmesan (about ½ cup). Increase heat to medium, bring to a simmer and cook, tossing constantly, until the pasta is al dente and the liquid is slightly thickened, about 2 minutes.",
+      "Transfer to a platter and top with more Parmesan."
+    ],
+    "notes": [
+      "I finely chopped the vegetables instead of pulsing them."
+    ],
+    "unspecified": "",
+    "components": []
   }
 ];

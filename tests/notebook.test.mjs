@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,access} from 'node:fs/promises';
 import {recipes,categories} from '../public/recipes.js';
 test('supplied recipes and exact starter measurements',()=>{
- assert.equal(recipes.length,26);assert.equal(recipes[0].ingredients.length,11);
+ assert.equal(recipes.length,28);assert.equal(recipes[0].ingredients.length,11);
  assert.deepEqual(recipes[0].ingredients[1],['1½ tbsp','white miso paste']);
  assert.deepEqual(recipes[0].ingredients[6],['1¼ cups','all-purpose flour']);
  assert.equal(recipes[0].steps.length,6);
@@ -21,11 +21,11 @@ test('all offline assets exist and manifest remains subpath safe',async()=>{
 
 test('all distinct recipes and components have unique routes and sources',()=>{
  assert.equal(new Set(recipes.map(r=>r.id)).size,recipes.length);
- assert.equal(new Set(recipes.map(r=>r.source)).size,13);
+ assert.equal(new Set(recipes.map(r=>r.source)).size,15);
  assert.equal(recipes.filter(r=>r.title==='Brown Butter Miso Chocolate Chip Cookies').length,1);
  assert.equal(recipes.find(r=>r.id==='chocolate-birthday-cake').components[0].title,'Frosting');
  assert.equal(recipes.find(r=>r.id==='chocolate-pecan-pie').components.length,2);
- assert.ok(recipes.every(r=>r.source&&r.unspecified));
+ assert.ok(recipes.every(r=>r.source&&typeof r.unspecified==='string'));
 });
 
 test('reference fonts and sheet styles are bundled and available offline',async()=>{

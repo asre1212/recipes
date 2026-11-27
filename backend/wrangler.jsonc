@@ -1,0 +1,17 @@
+{
+ "name":"recipe-drive-backups",
+ "main":"worker.js",
+ "compatibility_date":"2026-11-27",
+ "workers_dev":true,
+ "assets":{"directory":"../dist","binding":"ASSETS","run_worker_first":["/api/*","/auth/*","/health"]},
+ "observability":{"enabled":false},
+ "durable_objects":{"bindings":[{"name":"BACKUP","class_name":"DriveCoordinator"}]},
+ "migrations":[{"tag":"v1","new_sqlite_classes":["DriveCoordinator"]}],
+ "vars":{
+  "FRONTEND_ORIGIN":"https://ISOLATED_RECIPE_ORIGIN_REQUIRED",
+  "GOOGLE_CLIENT_ID":"OWNER_PROJECT_REQUIRED",
+  "GOOGLE_CONSENT_MODE":"PRODUCTION_REQUIRED",
+  "ALLOWED_GOOGLE_EMAIL":"OWNER_ACCOUNT_REQUIRED",
+  "AUTH_EPOCH":"1"
+ }
+}

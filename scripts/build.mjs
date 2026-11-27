@@ -1,3 +1,4 @@
+import './vendor-jose.mjs';
 import {createHash} from 'node:crypto';
 import {cp,mkdir,rm,readdir,readFile,writeFile} from 'node:fs/promises';
 import {recipes,categories} from '../public/recipes.js';

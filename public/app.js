@@ -1,3 +1,4 @@
+import {startRemoteBackup} from './remote-backup.js';
 import {readerCopy} from './recipe-copy.js';
 import {readerTemperatures} from './temperatures.js';
 import {scheduleRecipeRuling,refreshRecipeRuling} from './recipe-ruling.js';
@@ -90,7 +91,7 @@ notebookMenu.addEventListener('click',event=>{if(event.target.closest('a,button'
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!notebookMenu.hidden){closeMenu(true);event.preventDefault();}});
 document.addEventListener('click',event=>{if(!event.target.closest('.site-header'))closeMenu();});
 document.addEventListener('focusin',event=>{if(!notebookMenu.hidden&&!event.target.closest('.site-header'))closeMenu();});
-startAutoBackup();
+startAutoBackup();startRemoteBackup();
 render();
 const help=header.querySelector('#install-help');
 help.addEventListener('click',()=>{const guide=document.querySelector('#install-guide');guide.hidden=!guide.hidden;help.setAttribute('aria-expanded',String(!guide.hidden));});

@@ -2,3 +2,12 @@ dist/
 node_modules/
 *.zip
 .openai/
+
+# Backup service credentials/runtime state never belong in Git.
+.dev.vars*
+.env*
+*.pem
+.wrangler/
+backend/dry-run/
+
+**/dry-run/

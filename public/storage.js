@@ -33,12 +33,23 @@ async function saved(snapshot){for(const listener of saveListeners){try{await li
 export async function saveRecipe(recipe){
  const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');tx.objectStore('recipes').put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});await saved();
 }
-export async function restoreRecipes(recipes,sections,recipeOrder,manualRecipeIds){
- await saveBookState(recipes,sections,recipeOrder,manualRecipeIds);
+export async function restoreRecipes(recipes,sections,recipeOrder,manualRecipeIds,replaceTarget=false){
+ await saveBookState(recipes,sections,recipeOrder,manualRecipeIds,replaceTarget);
 }
-export async function saveBookState(recipes,sections,recipeOrder,manualRecipeIds){
+export async function saveBookState(recipes,sections,recipeOrder,manualRecipeIds,replaceTarget=false){
  const db=await openDatabase();if(manualRecipeIds!==undefined&&manualRecipeIds!==null)validateManualIds(manualRecipeIds);if(sections)validateSections(sections);if(recipeOrder!==undefined&&!['alphabetical','manual'].includes(recipeOrder))throw Error('Invalid recipe order.');
- await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');if(recipeOrder!==undefined)tx.objectStore('settings').put(recipeOrder,'recipeOrder');if(manualRecipeIds!==undefined)tx.objectStore('settings').put(manualRecipeIds,'manualRecipeIds');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});await saved();
+ await new Promise((resolve,reject)=>{
+  const tx=db.transaction(['recipes','settings'],'readwrite');
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));
+  try{
+   const settings=tx.objectStore('settings');
+   if(recipeOrder!==undefined)settings.put(recipeOrder,'recipeOrder');
+   if(manualRecipeIds!==undefined)settings.put(manualRecipeIds,'manualRecipeIds');
+   const store=tx.objectStore('recipes');if(replaceTarget===true)store.clear();
+   for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});
+   if(sections){settings.put(sections,'sections');settings.put(2,'sectionOrderVersion');}
+  }catch(error){tx.abort();reject(error);}
+ });await saved();
 }
 export async function getSetting(key,fallback){const db=await openDatabase();const value=await result(db.transaction('settings').objectStore('settings').get(key));return value??fallback;}
 export async function setSetting(key,value){await transaction('settings','readwrite',store=>store.put(value,key));}

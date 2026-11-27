@@ -164,9 +164,36 @@
         "chocolate-birthday-cake"
       ],
       "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "6C7EC401-6A02-4A44-8A74-F0E5F9D47362.png",
+      "sha256": "c7c3f0607e9003ef0c10b5ea6769e474149b916e32599f3db98ca8650f67b9f0",
+      "bytes": 1304262,
+      "recipes": [
+        "lentil-dosa"
+      ],
+      "status": "ingredients and soaking step cross-checked; blending and cooking need confirmation"
+    },
+    {
+      "filename": "IMG_0379.png",
+      "sha256": "f56c431d940d1d5ebd720995552db1de88270e3c57b4582bc68414f0e560a75b",
+      "bytes": 981468,
+      "recipes": [
+        "bolognese"
+      ],
+      "status": "overlap reconciled with IMG_0380.png; cross-checked"
+    },
+    {
+      "filename": "IMG_0380.png",
+      "sha256": "b7d36ee7c2b809d42b7cb686243d06f0a3e8b07d7ca8660bbfec3ca4599a07f1",
+      "bytes": 1237039,
+      "recipes": [
+        "bolognese"
+      ],
+      "status": "continuation and overlapping ingredients reconciled with IMG_0379.png; cross-checked"
     }
   ],
-  "recipeCount": 26,
+  "recipeCount": 28,
   "originalPhotosPublished": false,
   "starterCookieAlsoReceivedAs": "IMG_3763.jpeg"
 }

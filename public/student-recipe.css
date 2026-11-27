@@ -86,3 +86,10 @@ html[data-recipe-font="kristi"] .recipe .ingredients ul{font-size:32px}html[data
 .contents .toc-status{line-height:22px;margin:0}
 
 .contents .section-order-controls:has([data-remove-section]){flex-wrap:wrap;max-width:calc(100% - 60px)}
+
+/* Recipe paper follows the writing's baselines while keeping its original flow. */
+.paper.recipe .recipe-heading{margin-top:0}
+.paper.recipe:after{background:none}
+.paper.recipe>.recipe-rules,.recipe .margin-note>.note-rules{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.recipe .margin-note>:not(.note-rules){position:relative;z-index:1}
+.recipe .trial-observation{align-items:start}.recipe .trial-arrow{align-self:center}

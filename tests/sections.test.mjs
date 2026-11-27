@@ -45,3 +45,8 @@ test('whole chapters move with descendants, preserve edits and renumber book ord
  assert.throws(()=>moveSection(sections,'main','main-indian'),/same level/);
  assert.deepEqual(moveSection(sections,'main','main'),sections);
 });
+
+test('editing a legacy bundled recipe keeps its existing position instead of moving it to chapter end',()=>{
+ const displayed=arrangeBook(rows,defaultSections);const existing=displayed.find(r=>r.id==='one');assert.equal(existing.bookOrder,0);
+ const edited={...existing,ingredients:[['2','changed amount']]};const reloaded=rows.map(r=>r.id===edited.id?edited:r);const after=arrangeBook(reloaded,defaultSections);assert.deepEqual(after.map(r=>r.id),displayed.map(r=>r.id));assert.deepEqual(after.find(r=>r.id==='one').ingredients,[['2','changed amount']]);
+});

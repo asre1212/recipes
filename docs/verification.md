@@ -98,3 +98,9 @@ a complete update. This does not touch IndexedDB owner records or settings.
 - Inspected all three new graphite masters at full resolution and their actual cookie, Bundt cake and milk-bread rendering at phone width. The cake matches the supplied Bundt method. Only three supplied pages contain drawings. Optimized transparent WebP assets total 635,510 bytes and are included in the service-worker cache. See food-sketches.md for the generation prompt set.
 - Compared all 26 recipes with the preceding release, excluding only illustration path/alt metadata: titles, quantities, method, components, uncertainty notes and internal provenance are unchanged. Cover artwork is unchanged.
 - Physical iPhone, Safari and an installed iOS Home Screen app are unavailable in this environment; phone-width browser/pointer tests are not a substitute for those device checks.
+
+### Deployed readback and final edit-order regression
+
+- GitHub Pages served build `267a9a094b26c661`; both CI and deployment succeeded. Updating from build `5f254506680a7f91` through Check for app update retained a temporary browser-local note, all 26 supplied IDs and the migrated Main → Sides → Desserts order. The synthetic note was then removed with Restore original.
+- That live check exposed an older editor ordering problem: a bundled recipe with no stored order received a new-entry timestamp and moved to the end of its section. The final patch materializes the existing fallback order before editing; a new regression test verifies that changing ingredients retains the page position.
+- With the real preview server stopped, the new build reloaded from its service worker with all 27 local QA records and the custom layout retained. Cookies, Bundt cake and milk bread images all loaded from cache.

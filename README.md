@@ -4,9 +4,10 @@ An iPhone-friendly, installable recipe notebook PWA. A kraft cover opens into ge
 
 ## Run
 
-No third-party runtime dependencies.
+No third-party runtime dependencies. IndexedDB regression tests use the development-only fake-indexeddb package.
 
 ```sh
+npm ci
 npm test
 npm run build
 ```
@@ -43,3 +44,14 @@ Restore validates the file and schema before showing add/copy/skip/replace count
 GitHub backup is a manual opt-in path: download an encrypted `.encrypted.json` file, then upload only that ciphertext to a repository you choose (prefer private). Download and select it to restore. No GitHub credentials, remote backup uploads or personal-data sync are implemented. Deploying this app’s source is separate from backing up owner data. Original photos, passphrases, tokens and plaintext personal backups must never be added to this repository.
 
 Browser storage remains subject to eviction or clearing. The app offers `navigator.storage.persist()` where supported and external backups. A service worker is not a substitute for a backup.
+
+
+## Contents, sections and book order
+
+Choose **Reorder & sections** in Contents. Drag only the dotted handles; recipe links and the rest of the page remain available for navigation and scrolling. Drop before another row or into a named drop zone, including an empty category or Main cuisine. **Up**, **Down** and **Move to** work with touch controls and keyboard activation too. The recipe’s stable bookmark ID remains unchanged; page numbers and previous/next links derive from the same newly ordered library.
+
+Add named top-level sections or Main cuisine subsections in reorder mode. A nonempty section requires a destination before removal. Removing a parent safely reassigns all its child recipes and removes its subsection labels; recipes are never deleted. **Undo last change**, **Cancel changes** and **Done** are explicit controls. Cancelling layout changes preserves any recipe text edits or additions made while the reorder session was open.
+
+Section definitions are stored in the versioned local settings store, seeded only when absent. Existing custom categories/cuisines from older versions migrate into the first section layout. Intentionally removed defaults are not recreated by bundle updates. Layout/category/order changes are local overrides. Backups include section definitions, stable section IDs and per-recipe book ordering; restoring a section layout requires its own visible checkbox in the checked restore preview. Older version-1 backups without layout metadata remain compatible.
+
+The detail sheet now follows the approved written recipe card using bundled local fonts; the cover uses a fresh reference-matched bear vector. The mobile app fills the dynamic viewport with safe-area padding for controls. Normal Safari browser chrome remains controlled by Safari; Home Screen standalone display is declared in the manifest. Zoom is not disabled.

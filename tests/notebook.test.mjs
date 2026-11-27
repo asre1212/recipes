@@ -27,3 +27,12 @@ test('all distinct recipes and components have unique routes and sources',()=>{
  assert.equal(recipes.find(r=>r.id==='chocolate-pecan-pie').components.length,2);
  assert.ok(recipes.every(r=>r.source&&r.unspecified));
 });
+
+test('reference fonts and sheet styles are bundled and available offline',async()=>{
+ const css=await readFile('public/written-recipe.css','utf8');
+ assert.match(css,/WrittenScript/);assert.match(css,/WrittenBody/);
+ assert.match(css,/grid-template-columns:minmax/);
+ const html=await readFile('public/index.html','utf8');assert.match(html,/written-recipe.css/);
+ for(const name of ['written-script.woff','written-body.woff','written-body-italic.woff'])await access('public/assets/fonts/'+name);
+ const sw=await readFile('public/sw.js','utf8');assert.match(sw,/written-body-italic.woff/);
+});

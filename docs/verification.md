@@ -14,3 +14,57 @@ Verified 27 November 2026.
 - GitHub source readback matched local source; GitHub Actions build passed. GitHub Pages enabled with HTTPS. Visited the live deployed cover and followed its contents and Chocolate Birthday Cake page; original source reference and frosting rendered together. Production contained 26 supplied entries, without QA samples.
 
 Limits: no physical iPhone or Safari is available here. Native Add to Home Screen installation and real airplane-mode behavior on iOS were not exercised. Offline fallback was tested with a simulated unavailable network, and browser storage remains subject to browser eviction or clearing. Personal encrypted backups are download/manual-upload only; no owner backup was sent to GitHub.
+
+## Reference style, full-screen and editable contents release
+
+The recipe data file is unchanged in this release: all 26 supplied titles,
+quantities, components and uncertainty notes are preserved. Styling now uses
+bundled URW Z003 and DejaVu fonts, a measured cream ruled sheet/pink margin,
+binder dots, the two-line cookie title, rust underline, right-hand outlined notes,
+circled steps and footer notes. Navigation/edit controls moved outside the sheet.
+The bear cover was redrawn from the actual supplied photo with the matching
+silhouette, pose, cookie, sticker border and brown kraft composition; the raw
+photo is excluded from source and deployment.
+
+Additional completed checks:
+
+- 15 automated tests pass, including a real IndexedDB implementation in Node.
+  Reorder within a section, cross-section and empty-cuisine placement, safe
+  section removal/reassignment, parent removal, invalid section trees, legacy
+  custom-category adoption, cancellation preserving concurrent text edits,
+  encrypted layout round-trip, data persistence across updated bundles and
+  removed-default/update-preference preservation are covered.
+- Actual browser pointer drag in a 390px iframe moved Chocolate Birthday Cake
+  before the cookie and changed the derived page numbers from 04/03 to 03/04.
+  Undo returned the original order. Desktop keyboard Enter on the Up control
+  performed the same operation.
+- Phone move controls placed a recipe into empty Chinese and newly created
+  sections. Removing a populated section without a destination was blocked;
+  choosing Desserts reassigned it while retaining all 27 local QA records.
+  Cancel restored the original book layout.
+- Added an empty section, completed reorder mode, reloaded and verified it
+  persisted. Removed it, reloaded and verified it stayed removed. A synthetic
+  recipe moved from Indian to Chinese still had `main-chinese` after reload.
+- Inspected the downloaded backup: all 27 QA records had stable section IDs and
+  ordering, together with six section definitions. These are localhost-only QA
+  records; no backup or synthetic recipe is published.
+- Compared actual phone screenshots side by side with the native high-resolution
+  cookie card and the original cover photo. Both remain editable HTML/vector
+  compositions, not flattened recipe images. Verified an unillustrated birthday
+  cake page has zero sketch elements and all 19 cake/frosting ingredient lines.
+- Phone DOM viewport and scroll width both measured 375 CSS pixels (390px iframe
+  including its scrollbar): no horizontal overflow. Browser zoom also had equal
+  viewport/scroll widths at 899 CSS pixels. Dynamic viewport heights, safe-area
+  control padding and standalone manifest are present; zoom remains enabled.
+- Stopped the actual preview server, reloaded the app under its service worker,
+  and opened Contents, the cookie and the editor successfully offline. The DOM
+  build identity was `a53aa3f64596cbb1`, and all 27 local QA recipes persisted.
+  This exercised the actual browser cache, beyond simulated-network unit tests.
+- Previous-version localhost storage migrated without loss; saved synthetic
+  records and overrides remained after loading the new build identity.
+
+Physical touch hardware, Safari and iOS Home Screen installation remain unavailable
+in this environment. Pointer gestures and touch-friendly move alternatives were
+verified in a phone-sized browser viewport; ordinary Safari chrome is not claimed
+hidden. Screenshot comparisons were captured in the browser thread; screenshot
+file export was unavailable, so no Library screenshot ID is claimed.

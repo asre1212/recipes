@@ -11,5 +11,5 @@ test('service worker saves the complete shell and serves navigation/assets witho
  handlers.activate({waitUntil:p=>promise=p});await promise;assert.equal(claimed,true);
  let response;handlers.fetch({request:{method:'GET',url:'https://example.test/recipes/',mode:'navigate'},respondWith:p=>response=p});assert.equal((await response).url,'https://example.test/recipes/index.html');
  handlers.fetch({request:{method:'GET',url:'https://example.test/recipes/recipes.js',mode:'cors'},respondWith:p=>response=p});assert.equal((await response).url,'https://example.test/recipes/recipes.js');
- handlers.message({data:{type:'SKIP_WAITING'}});assert.equal(skipped,true);
+ handlers.message({data:{type:'SKIP_WAITING'},waitUntil:p=>promise=p});assert.equal(skipped,true);
 });

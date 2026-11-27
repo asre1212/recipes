@@ -9,7 +9,7 @@ test('plain backups validate, strip unsafe artwork, and reject duplicates/schema
  assert.equal(validateBackup(backup)[0].illustration,undefined);assert.equal(validateBackup(backup)[0].source,recipe.source);
  assert.throws(()=>validateBackup({...backup,recipes:[recipe,recipe]}));
  assert.throws(()=>validateBackup({...backup,version:42}));
- assert.throws(()=>validateBackup({...backup,recipes:[{...recipe,category:'Unknown'}]}));
+ assert.throws(()=>validateBackup({...backup,recipes:[{...recipe,category:''}]}));
  assert.throws(()=>validateBackup({...backup,recipes:[{...recipe,id:'../oops'}]}));
 });
 test('merge explicitly keeps, copies or replaces duplicates by stable ID or title',()=>{

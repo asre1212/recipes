@@ -20,3 +20,6 @@ const revision=digest.digest('hex').slice(0,16);
 const sw=await readFile('dist/sw.js','utf8');
 await writeFile('dist/sw.js',sw.replace(/const CACHE = '[^']+';/,`const CACHE = 'recipe-notebook-${revision}';`));
 console.log(`Offline cache revision: ${revision}`);
+
+const app=await readFile('dist/app.js','utf8');
+await writeFile('dist/app.js',app.replace("const APP_BUILD='development';",`const APP_BUILD='${revision}';`));

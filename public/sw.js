@@ -1,6 +1,6 @@
 const CACHE = 'recipe-notebook-v5';
 const ROOT = new URL('./', self.location.href).href;
-const FILES = ['./', './index.html', './style.css', './app.js', './recipes.js', './storage.js', './crypto.js', './kitchen.js', './manifest.webmanifest', './assets/bear.svg', './assets/cookies.svg', './assets/cake.svg', './assets/bread.svg', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/apple-touch-icon.png'];
+const FILES = ['./', './index.html', './style.css', './written-recipe.css', './assets/fonts/written-script.woff', './assets/fonts/written-body.woff', './assets/fonts/written-body-italic.woff', './app.js', './recipes.js', './storage.js', './crypto.js', './kitchen.js', './sections.js', './contents.js', './manifest.webmanifest', './assets/bear.svg', './assets/cookies.svg', './assets/cake.svg', './assets/bread.svg', './assets/icon.svg', './assets/icon-192.png', './assets/icon-512.png', './assets/apple-touch-icon.png'];
 self.addEventListener('install', event => {event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(file => new URL(file,ROOT).href))));});
 self.addEventListener('activate', event => {event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('recipe-notebook-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch', event => {
@@ -11,4 +11,4 @@ self.addEventListener('fetch', event => {
  event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)));
 });
 
-self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});
+self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')event.waitUntil(self.skipWaiting());});

@@ -7,6 +7,7 @@ export const recipeArt=Object.freeze({
  'zucchini-bread':{src:'assets/zucchini-pair-graphite.webp',alt:'Two smiling zucchinis leaping with outstretched hands',placement:'left',size:'large',width:720,height:720},
  'sourdough-discard-naan':{src:'assets/naan-graphite.webp',alt:'Two overlapping blistered naan flatbreads',placement:'between',size:'wide',width:720,height:720},
  'fortnum-mason-shortbread':{src:'assets/shortbread-big-ben-graphite.webp',alt:'Elizabeth Tower with its clock face and Gothic spire',placement:'next-right',size:'tower',width:720,height:1080,companion:{src:'assets/shortbread-bearskin-graphite.webp',alt:'A tall rounded bearskin cap with shaded fur',width:480,height:480}},
+ 'chocolate-lava-cake':{src:'assets/lava-character-graphite.webp',alt:'A smiling lava cake in a ramekin hat and boots beside ice cream with mint',placement:'next-right',size:'side-food',width:720,height:720},
  'camp-cookies':{src:'assets/camp-elephants-graphite.webp',alt:'Two elephants together, the larger holding grass in its trunk',placement:'next-right',size:'elephants',width:720,height:720,tilt:0},
  'spring-roll-shrimp':{src:'assets/shrimp-rolls-graphite.webp',alt:'Crisp shrimp rolls with visible tails',placement:'next-right',size:'side-food',width:720,height:720}
 });

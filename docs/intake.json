@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "sourcePhotos": [
+    {
+      "filename": "IMG_3758.jpeg",
+      "sha256": "a01d11f544d8025f14e2c7a2a0e5ddfee597ecd5a53693d2bbfb288db140cb03",
+      "bytes": 301734,
+      "recipes": [
+        "camp-cookies"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3759.jpeg",
+      "sha256": "db2b0ea5e72b8d6153d39d5c60c27ca7e767324b30eb7dca219063b77cb8df09",
+      "bytes": 368824,
+      "recipes": [
+        "chocolate-chip-banana-bread",
+        "chocolate-lava-cake",
+        "tiramisu"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3760.jpeg",
+      "sha256": "278d06d784c0bb1585276ad6d8c461785a3878f130ce60d5f45ad2e2a953bfd5",
+      "bytes": 349847,
+      "recipes": [
+        "sticky-toffee-pudding",
+        "banana-pudding-magnolia-bakery"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3761.jpeg",
+      "sha256": "ba9195ed58fe1cc129ec34dea9e9409b92e7f7a745b37216160b33d5237474ff",
+      "bytes": 361519,
+      "recipes": [
+        "fortnum-mason-shortbread",
+        "pistachio-olive-oil-cake"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3762.jpeg",
+      "sha256": "df8afbbce90b4ba2eda5d2c726604644e531c6ccec54170fa9eeeb2a7c24c5c9",
+      "bytes": 365073,
+      "recipes": [
+        "zucchini-bread",
+        "chocolate-pecan-pie"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3763.jpeg",
+      "sha256": "e7bdc964d117346a98cdd95ca4a170b8b3677f49045c8f3770f297830ceaa202",
+      "bytes": 315327,
+      "recipes": [
+        "brown-butter-miso-chocolate-chip-cookies"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3764.jpeg",
+      "sha256": "67467c4e5abf8b154b8adc7c1498dadc903ee9df3ea3e26cd36006603dcc58e1",
+      "bytes": 280171,
+      "recipes": [
+        "blueberry-pie",
+        "baked-pb-banana-oats"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3765(1).jpeg",
+      "sha256": "ac876e7a74c57fa6c784d53b10234ba170e30d24cc4942d51b5c19348cce116f",
+      "bytes": 381284,
+      "recipes": [
+        "flaky-pie-crust",
+        "pao-de-queijo",
+        "basic-quiche-recipe"
+      ],
+      "status": "duplicate-skipped",
+      "duplicateOf": "IMG_3765.jpeg"
+    },
+    {
+      "filename": "IMG_3765.jpeg",
+      "sha256": "ac876e7a74c57fa6c784d53b10234ba170e30d24cc4942d51b5c19348cce116f",
+      "bytes": 381284,
+      "recipes": [
+        "flaky-pie-crust",
+        "pao-de-queijo",
+        "basic-quiche-recipe"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3766(1).jpeg",
+      "sha256": "8b64d0be2f2f03809e720bf9311c48009e66eff71e07b5f33436fd969e0794f6",
+      "bytes": 303574,
+      "recipes": [
+        "chocolate-pie-dupe"
+      ],
+      "status": "duplicate-skipped",
+      "duplicateOf": "IMG_3766.jpeg"
+    },
+    {
+      "filename": "IMG_3766.jpeg",
+      "sha256": "8b64d0be2f2f03809e720bf9311c48009e66eff71e07b5f33436fd969e0794f6",
+      "bytes": 303574,
+      "recipes": [
+        "chocolate-pie-dupe"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3767(1).jpeg",
+      "sha256": "c6e7ecb55f0f3fbcd43a7b0ee1f3e0a03010fb4d129b05edfd30849c31f63f02",
+      "bytes": 373489,
+      "recipes": [
+        "sourdough",
+        "sourdough-discard-scones",
+        "sourdough-discard-naan"
+      ],
+      "status": "duplicate-skipped",
+      "duplicateOf": "IMG_3767.jpeg"
+    },
+    {
+      "filename": "IMG_3767.jpeg",
+      "sha256": "c6e7ecb55f0f3fbcd43a7b0ee1f3e0a03010fb4d129b05edfd30849c31f63f02",
+      "bytes": 373489,
+      "recipes": [
+        "sourdough",
+        "sourdough-discard-scones",
+        "sourdough-discard-naan"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3768.jpeg",
+      "sha256": "e1603bfe11f1fd7316efe445ce339d90e8cb53aeaecfe5a5571c73075bfbfded",
+      "bytes": 377625,
+      "recipes": [
+        "milk-bread",
+        "copycat-mary-os-irish-soda-bread-scones"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3769.jpeg",
+      "sha256": "7507096611cb87964b352f6415549a8f977701de73666792e1a54ff6efbcb9f6",
+      "bytes": 327199,
+      "recipes": [
+        "shrimp-marinade",
+        "spring-roll-shrimp",
+        "crab-cakes"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    },
+    {
+      "filename": "IMG_3770.jpeg",
+      "sha256": "7a7d50b67bcb471e702821414228ec10fd7757bcde95610a3799d754f6f024bd",
+      "bytes": 339033,
+      "recipes": [
+        "chocolate-birthday-cake"
+      ],
+      "status": "transcribed; uncertainties retained in recipe"
+    }
+  ],
+  "recipeCount": 26,
+  "originalPhotosPublished": false,
+  "starterCookieAlsoReceivedAs": "IMG_3763.jpeg"
+}

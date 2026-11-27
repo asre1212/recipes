@@ -68,3 +68,13 @@ in this environment. Pointer gestures and touch-friendly move alternatives were
 verified in a phone-sized browser viewport; ordinary Safari chrome is not claimed
 hidden. Screenshot comparisons were captured in the browser thread; screenshot
 file export was unavailable, so no Library screenshot ID is claimed.
+
+Live release readback: GitHub checks and Pages deployment succeeded. The already
+open previous-version production app updated through **Check for app update** to
+build `a53aa3f64596cbb1` without a manual reload or reinstall, retained 26 recipes,
+and displayed the new reorder control. All 26 deployed title/TOC pairs and footer
+back-links matched, every ingredient list was present, and no synthetic QA record
+was in production. Reorder mode exposed 26 handles, six drop zones and the section
+form; leaving with Done made no recipe moves. The live bundled editor opened and
+cancelled correctly. The final cover adjustment uses a single continuous kraft
+background for header and cover and keeps the bear centered across aspect ratios.

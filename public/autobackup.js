@@ -6,7 +6,7 @@ async function syncFolder(snapshot){
  if(typeof globalThis.showDirectoryPicker!=='function')return;
  const folder=await getSetting('autoBackupFolder',null);if(!folder)return;
  try{if(await folder.queryPermission({mode:'readwrite'})!=='granted')throw Error('Folder permission needed. Open Auto Backup and reconnect.');
- const backup=snapshot||makeBackup(await loadLibrary(),await getSetting('sections'));
+ const backup=snapshot||makeBackup(await loadLibrary(),await getSetting('sections'),await getSetting('recipeOrder','alphabetical'));
  const owned=await getSetting('autoBackupFiles',[]);const next=await rotateFolder(folder,backup,owned,names=>setSetting('autoBackupFiles',names));await setSetting('autoBackupFiles',next);await setSetting('autoBackupFolderStatus','Saved to '+folder.name+' at '+new Date().toLocaleString());
  }catch(error){await setSetting('autoBackupFolderStatus','Folder backup paused: '+error.message);}
 }

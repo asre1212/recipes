@@ -33,3 +33,12 @@ export function moveSection(sections,id,beforeId=null){
  const roots=moved.parentId?sections.filter(s=>!s.parentId):ordered;
  return validateSections(roots.flatMap(root=>[root,...(root.id===moved.parentId?ordered:sections.filter(s=>s.parentId===root.id))]));
 }
+
+export const hiddenCuisine=section=>Boolean(section.parentId&&['Indian','Chinese','Other'].includes(section.name));
+// View ordering never writes bookOrder: an older/manual arrangement remains recoverable.
+export function readingGroups(sections){return sections.filter(s=>!s.parentId).flatMap(root=>[{section:root,ids:[root.id,...sections.filter(s=>s.parentId===root.id&&hiddenCuisine(s)).map(s=>s.id)]},...sections.filter(s=>s.parentId===root.id&&!hiddenCuisine(s)).map(s=>({section:s,ids:[s.id]}))]);}
+const titleOrder=new Intl.Collator('en',{sensitivity:'base'});
+export function arrangeReadingBook(recipes,sections,mode='alphabetical'){
+ const manual=arrangeBook(recipes,sections);if(mode==='manual')return manual;
+ return readingGroups(sections).flatMap(group=>manual.filter(r=>group.ids.includes(r.sectionId)).sort((a,b)=>titleOrder.compare(a.title,b.title)));
+}

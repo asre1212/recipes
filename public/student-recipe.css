@@ -97,3 +97,9 @@ html[data-recipe-font="kristi"] .recipe .ingredients ul{font-size:32px}html[data
 /* The new chicken's portrait frame uses the full ingredient-side width. */
 .recipe .recipe-grid>.art-side-food:has(img[src$="pecan-chicken-graphite.webp"]){height:calc(var(--side-art)*1.25 + 8px)}
 .recipe .recipe-grid>.art-side-food img[src$="pecan-chicken-graphite.webp"]{height:calc(var(--side-art)*1.25)}
+
+/* TOC-only search stays beside the notebook menu, outside the paper's ink. */
+.site-header .toc-search-toggle{margin-left:auto;width:44px;height:44px;min-width:44px;padding:10px;border:0;background:transparent;color:#263e58;display:inline-flex;align-items:center;justify-content:center}
+.toc-search-toggle[hidden],.contents #toc-search[hidden],.contents .toc-row[hidden],.contents .toc-section[hidden],.contents .toc-subheading[hidden],.contents .toc-no-results[hidden],.contents .empty[hidden]{display:none!important}
+.site-header:has(.toc-search-toggle:not([hidden])) .menu-toggle{margin-left:0}
+.contents #toc-search{margin:0 0 12px}.contents .toc-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px;align-items:center}.contents .toc-search-row input{min-width:0;width:100%;min-height:44px;padding:7px 8px;font:16px/1.5 system-ui,sans-serif;color:#263e58;background:#fffdf5;border:1px solid #9ba9aa;border-radius:3px}.contents .toc-search-row button{min-height:44px;padding:6px;font:12px/1.5 system-ui,sans-serif;background:#fffdf5;border:1px solid #9ba9aa;border-radius:3px;color:#263e58}.contents .toc-no-results{font:15px/22px WrittenBody,serif;margin:0}

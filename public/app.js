@@ -5,15 +5,15 @@ import {recipeArt,readerNotes,readerIngredients,readerUncertainty} from './recip
 import {autoBackupPage,bindAutoBackup,startAutoBackup} from './autobackup.js';
 import {trialSection,bindTrials} from './trials.js';
 import {defaultSections,arrangeReadingBook} from './sections.js';
-import {contentsPage,bindContents,contentsMenu} from './contents.js';
+import {contentsPage,bindContents,contentsMenu,isReordering} from './contents.js';
 import {recipes as bundledRecipes} from './recipes.js';
 import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe,saveBookState,initializeSections} from './storage.js';
 import {editorPage,bindEditor,backupPage,bindBackup,hasDraft,discardDraft} from './kitchen.js';
 const APP_BUILD='development';
 document.documentElement.dataset.appBuild=APP_BUILD;
-const recipes=[];const sections=[];let recipeOrder='alphabetical';
-const refreshLibrary=async()=>{const savedSections=await getSetting('sections',defaultSections);sections.splice(0,sections.length,...savedSections);recipeOrder=await getSetting('recipeOrder','alphabetical');const next=await loadLibrary(bundledRecipes.map(r=>r.id));recipes.splice(0,recipes.length,...arrangeReadingBook(next,sections,recipeOrder));};
-const saveBook=async(nextRecipes,nextSections)=>{await saveBookState(nextRecipes,nextSections);await refreshLibrary();};
+const recipes=[];const sections=[];let recipeOrder='alphabetical';let manualRecipeIds=null;
+const refreshLibrary=async()=>{const savedSections=await getSetting('sections',defaultSections);sections.splice(0,sections.length,...savedSections);recipeOrder=await getSetting('recipeOrder','alphabetical');manualRecipeIds=await getSetting('manualRecipeIds',null);const next=await loadLibrary(bundledRecipes.map(r=>r.id));recipes.splice(0,recipes.length,...arrangeReadingBook(next,sections,recipeOrder,manualRecipeIds));};
+const saveBook=async(nextRecipes,nextSections,options={})=>{await saveBookState(nextRecipes,nextSections,options.recipeOrder,options.manualRecipeIds);await refreshLibrary();};
 const book = document.querySelector('#book');
 const header=document.querySelector('.site-header');
 const headerAnchor=document.createComment('Notebook navigation mounts only on paper pages');header.before(headerAnchor);
@@ -21,7 +21,7 @@ const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<'
 const pageNumber = recipe => recipes.indexOf(recipe) + 3;
 const footer = (number, previous, next) => `<footer class="page-footer"><a href="${previous}" aria-label="Previous page">Previous</a><a class="page-number" href="#contents" aria-label="Page ${number}. Back to contents">${String(number).padStart(2,'0')}<span>Contents</span></a>${next ? `<a href="${next}" aria-label="Next page">Next</a>` : '<span class="end-note">End of book</span>'}</footer>`;
 const entry = r => `<li><a class="toc-entry" href="#recipe/${escape(r.id)}"><span>${escape(r.title)}</span><span class="toc-rule" aria-hidden="true"></span><span class="toc-number">${String(pageNumber(r)).padStart(2,'0')}</span></a></li>`;
-function contents(){return contentsPage(recipes,sections,footer(2,'#cover',recipes.length?'#recipe/'+recipes[0].id:null),recipeOrder);}
+function contents(){return contentsPage(recipes,sections,footer(2,'#cover',recipes.length?'#recipe/'+recipes[0].id:null),recipeOrder,manualRecipeIds);}
 function cover() {
  return `<article class="cover"><a class="bear-link" href="#contents" aria-label="Open the table of contents"><img class="bear" src="assets/bear.svg" alt="" width="500" height="700"></a></article>`;
 }
@@ -47,6 +47,7 @@ function render() {
  header.hidden=coverOpen;header.inert=coverOpen;
  if(coverOpen)header.remove();else headerAnchor.after(header);
  header.querySelector('#menu-toggle').hidden=coverOpen;
+ header.querySelector('#toc-search-toggle').hidden=hash!=='#contents'||isReordering();
  header.querySelector('#contents-menu-actions').innerHTML=hash==='#contents'?contentsMenu(recipeOrder):'';
  const menuActions=header.querySelector('#recipe-menu-actions');
  menuActions.innerHTML=recipe?`<a href="#edit/${escape(recipe.id)}">Edit recipe</a>${recipe.overridden&&bundledRecipes.some(b=>b.id===recipe.id)?'<button id="restore-original">Restore original</button>':''}`:'';
@@ -59,10 +60,10 @@ function render() {
  bindEditor(editing,async id=>{await refreshLibrary();location.hash='#recipe/'+id;},sections);
  }
  else if(hash==='#autobackup'){book.innerHTML=autoBackupPage();title='Auto Backup';bindAutoBackup();}
- else if(hash==='#backup'){book.innerHTML=backupPage();title='Backups & updates';bindBackup(recipes,refreshLibrary,checkUpdates,value=>{autoUpdate=value;if(value)applyWaitingUpdate();},{sections:()=>sections,order:()=>recipeOrder});}
+ else if(hash==='#backup'){book.innerHTML=backupPage();title='Backups & updates';bindBackup(recipes,refreshLibrary,checkUpdates,value=>{autoUpdate=value;if(value)applyWaitingUpdate();},{sections:()=>sections,order:()=>recipeOrder,manualIds:()=>manualRecipeIds});}
  else
  if(hash==='#cover') { book.innerHTML=cover(); title='The notebook'; }
- else if(hash==='#contents') { book.innerHTML=contents(); title='Contents';bindContents(recipes,sections,saveBook,render,recipeOrder,async mode=>{await setSetting('recipeOrder',mode);await refreshLibrary();render();}); }
+ else if(hash==='#contents') { book.innerHTML=contents(); title='Contents';bindContents(recipes,sections,saveBook,render,recipeOrder,async(mode,ids)=>{await saveBookState([],undefined,mode,ids);await refreshLibrary();render();},manualRecipeIds); }
  else if(recipe) { book.innerHTML=recipePage(recipe); title=recipe.title;bindTrials(recipe,async()=>{await refreshLibrary();render();const trials=document.querySelector('.prior-trials');trials?.scrollIntoView({block:'start'});trials?.focus({preventScroll:true});}); }
  else { book.innerHTML=`<article class="paper missing"><h1>A missing page</h1><p>This recipe isn’t in the notebook yet.</p><a class="open-book" href="#contents">Back to contents</a></article>`; title='Page not found'; }
  document.title=title+' · Recipe';
@@ -79,7 +80,7 @@ function render() {
 window.addEventListener('hashchange',render);
 window.addEventListener('beforeunload',e=>{if(hasDraft()){e.preventDefault();e.returnValue='';}});
 let autoUpdate=true;
-try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipeOrder=await getSetting('recipeOrder','alphabetical');recipes.push(...arrangeReadingBook(await initializeLibrary(bundledRecipes),sections,recipeOrder));autoUpdate=await getSetting('autoUpdate',true);const chosen=await getSetting('recipeFont','default');document.documentElement.dataset.recipeFont=['kalam','kristi'].includes(chosen)?chosen:'default';}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeReadingBook(bundledRecipes,sections,recipeOrder));document.querySelector('#storage-warning').hidden=false;}
+try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipeOrder=await getSetting('recipeOrder','alphabetical');manualRecipeIds=await getSetting('manualRecipeIds',null);recipes.push(...arrangeReadingBook(await initializeLibrary(bundledRecipes),sections,recipeOrder,manualRecipeIds));autoUpdate=await getSetting('autoUpdate',true);const chosen=await getSetting('recipeFont','default');document.documentElement.dataset.recipeFont=['kalam','kristi'].includes(chosen)?chosen:'default';}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeReadingBook(bundledRecipes,sections,recipeOrder,manualRecipeIds));document.querySelector('#storage-warning').hidden=false;}
 const menuToggle=header.querySelector('#menu-toggle');
 const notebookMenu=header.querySelector('#notebook-menu');
 const fontPicker=header.querySelector('#recipe-font');fontPicker.value=document.documentElement.dataset.recipeFont||'default';fontPicker.addEventListener('change',async()=>{const selected=['kalam','kristi'].includes(fontPicker.value)?fontPicker.value:'default';document.documentElement.dataset.recipeFont=selected;refreshRecipeRuling();try{await setSetting('recipeFont',selected);}catch{document.querySelector('#storage-warning').hidden=false;}closeMenu(true);});

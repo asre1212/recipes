@@ -31,17 +31,18 @@ async function saved(snapshot){for(const listener of saveListeners){try{await li
 export async function saveRecipe(recipe){
  const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');tx.objectStore('recipes').put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});await saved();
 }
-export async function restoreRecipes(recipes,sections,recipeOrder){
- await saveBookState(recipes,sections,recipeOrder);
+export async function restoreRecipes(recipes,sections,recipeOrder,manualRecipeIds){
+ await saveBookState(recipes,sections,recipeOrder,manualRecipeIds);
 }
-export async function saveBookState(recipes,sections,recipeOrder){
- const db=await openDatabase();if(sections)validateSections(sections);if(recipeOrder!==undefined&&!['alphabetical','manual'].includes(recipeOrder))throw Error('Invalid recipe order.');
- await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');if(recipeOrder!==undefined)tx.objectStore('settings').put(recipeOrder,'recipeOrder');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});await saved();
+export async function saveBookState(recipes,sections,recipeOrder,manualRecipeIds){
+ const db=await openDatabase();if(manualRecipeIds!==undefined&&manualRecipeIds!==null)validateManualIds(manualRecipeIds);if(sections)validateSections(sections);if(recipeOrder!==undefined&&!['alphabetical','manual'].includes(recipeOrder))throw Error('Invalid recipe order.');
+ await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');if(recipeOrder!==undefined)tx.objectStore('settings').put(recipeOrder,'recipeOrder');if(manualRecipeIds!==undefined)tx.objectStore('settings').put(manualRecipeIds,'manualRecipeIds');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});await saved();
 }
 export async function getSetting(key,fallback){const db=await openDatabase();const value=await result(db.transaction('settings').objectStore('settings').get(key));return value??fallback;}
 export async function setSetting(key,value){await transaction('settings','readwrite',store=>store.put(value,key));}
 export function validateBackup(value){
  if(!value||value.format!=='recipe-notebook'||value.version!==1||!Array.isArray(value.recipes)||value.recipes.length>2000)throw Error('This is not a supported Recipe notebook backup.');
+ if(value.manualRecipeIds!==undefined&&value.manualRecipeIds!==null)validateManualIds(value.manualRecipeIds);
  if(value.recipeOrder!==undefined&&!['alphabetical','manual'].includes(value.recipeOrder))throw Error('Invalid recipe order in backup.');
  const ids=new Set();const categories=['Desserts','Sides','Main'];
  const text=(v,max=20000)=>typeof v==='string'&&v.length<=max;
@@ -55,7 +56,7 @@ export function validateBackup(value){
  // Only accept known content fields; discard imported asset paths and metadata.
  return value.recipes.map(r=>({id:r.id,title:r.title,category:r.category,cuisine:r.cuisine||null,ingredients:r.ingredients,steps:r.steps,notes:r.notes,trials:(r.trials||[]).map(t=>({id:t.id,ingredient:t.ingredient,outcome:t.outcome})),unspecified:r.unspecified||'',components:r.components||[],source:text(r.source,300)?r.source:'Restored backup',...(text(r.sectionId,100)&&/^[a-z0-9-]+$/.test(r.sectionId)?{sectionId:r.sectionId}:{}),...(Number.isFinite(r.bookOrder)?{bookOrder:r.bookOrder}:{})}));
 }
-export function makeBackup(recipes,sections,recipeOrder){return {format:'recipe-notebook',version:1,createdAt:new Date().toISOString(),recipes,...(sections?{sections:validateSections(sections)}:{}),...(recipeOrder!==undefined?{recipeOrder}:{})};}
+export function makeBackup(recipes,sections,recipeOrder,manualRecipeIds){return {format:'recipe-notebook',version:1,createdAt:new Date().toISOString(),recipes,...(sections?{sections:validateSections(sections)}:{}),...(recipeOrder!==undefined?{recipeOrder}:{}),...(Array.isArray(manualRecipeIds)?{manualRecipeIds:validateManualIds(manualRecipeIds)}:{})};}
 export function previewMerge(current,incoming,policy){
  const byId=new Map(current.map(r=>[r.id,r]));const titles=new Map(current.map(r=>[r.title.trim().toLowerCase(),r]));
  return incoming.map(recipe=>{const match=byId.get(recipe.id)||titles.get(recipe.title.trim().toLowerCase());return {recipe,match,action:!match?'add':policy==='replace'?'replace':policy==='copy'?'copy':'skip'};});
@@ -76,3 +77,5 @@ export async function initializeSections(recipes){
  saved.onsuccess=ready;version.onsuccess=ready;tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Section migration was not saved.'));
  });return sections;
 }
+
+function validateManualIds(ids){if(!Array.isArray(ids)||ids.length>2000||new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||!/^[a-z0-9-]{1,150}$/.test(id)))throw Error('Invalid manual recipe order.');return [...ids];}

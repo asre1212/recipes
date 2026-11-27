@@ -7,11 +7,5 @@
  "observability":{"enabled":false},
  "durable_objects":{"bindings":[{"name":"BACKUP","class_name":"DriveCoordinator"}]},
  "migrations":[{"tag":"v1","new_sqlite_classes":["DriveCoordinator"]}],
- "vars":{
-  "FRONTEND_ORIGIN":"https://ISOLATED_RECIPE_ORIGIN_REQUIRED",
-  "GOOGLE_CLIENT_ID":"OWNER_PROJECT_REQUIRED",
-  "GOOGLE_CONSENT_MODE":"PRODUCTION_REQUIRED",
-  "ALLOWED_GOOGLE_EMAIL":"OWNER_ACCOUNT_REQUIRED",
-  "AUTH_EPOCH":"1"
- }
+ "keep_vars":true
 }

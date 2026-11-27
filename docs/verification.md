@@ -122,3 +122,7 @@ a complete update. This does not touch IndexedDB owner records or settings.
 - Font follow-up: 24 tests now pass. The menu offers Notebook default, Kalam and Kristi, with actual distinct licensed local WOFFs. Verified computed body families, FontFaceSet loaded checks for each, 390px screenshots and selected-font persistence on reload. The preference is independent of recipe/backup content and survives IndexedDB library updates. Kristi is enlarged; headings and controls remain in the default face.
 
 - Real offline check: stopped the preview server, reloaded build `c524eee786f4d275`, retained the selected Kristi preference and saved trials. Switched among Notebook default, Kalam and Kristi; FontFaceSet confirmed each actual face loaded from cache. Added a new trial and reloaded it successfully while the server remained stopped.
+
+## Header wordmark removal
+
+Inspected the owner's full-size IMG_3772.jpeg: the indicated item is the blue `recipe.` header wordmark on the cover, not stored recipe content. Removed that visible wordmark from the shared header and retained return-to-cover navigation as Cover inside the existing menu. The menu remains at the right; recipe data, trial history, font preferences and cover artwork are unchanged.

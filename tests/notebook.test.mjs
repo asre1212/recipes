@@ -7,8 +7,8 @@ test('supplied recipes and exact starter measurements',()=>{
  assert.deepEqual(recipes[0].ingredients[1],['1½ tbsp','white miso paste']);
  assert.deepEqual(recipes[0].ingredients[6],['1¼ cups','all-purpose flour']);
  assert.equal(recipes[0].steps.length,6);
- assert.match(recipes[0].unspecified,/oven temperature and bake time aren’t specified/);
- assert.match(recipes[0].unspecified,/“tsp sugar” but gives no number/);
+ assert.match(recipes[0].unspecified,/oven temperature and bake time need confirmation/);
+ assert.match(recipes[0].unspecified,/Sesame sugar: tsp, amount needs confirmation/);
  assert.deepEqual(categories.map(c=>c.name),['Desserts','Sides','Main']);
 });
 test('all offline assets exist and manifest remains subpath safe',async()=>{

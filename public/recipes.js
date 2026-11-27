@@ -81,7 +81,7 @@ export const recipes = [
       "Add sesame paste and toasted black sesame, ground with sugar.*",
       "Milk powder for more toasted flavor."
     ],
-    "unspecified": "* The sesame note says “tsp sugar” but gives no number. Add-in amounts, oven temperature and bake time aren’t specified. The notes don’t say when to add the sesame paste or milk powder.",
+    "unspecified": "Sesame sugar: tsp, amount needs confirmation. Add-in amounts, oven temperature and bake time need confirmation. When to add the sesame paste or milk powder is unclear.",
     "source": "IMG_3763.jpeg"
   },
   {
@@ -137,7 +137,7 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Set oven to 350° (unit not written).",
+      "Set oven to 350°F.",
       "Grease and line 2 baking pans with parchment paper on the bottom.",
       "Whisk the dry ingredients in a large bowl, then add oil, vanilla, eggs and buttermilk.",
       "Pour in the coffee.",
@@ -145,9 +145,9 @@ export const recipes = [
       "Cool in the pan for about 10–15 minutes, then invert onto a wire rack to cool a little more. Wrap in Saran wrap and chill; do it upside down to flatten."
     ],
     "notes": [
-      "Title annotation: “less sweet than Brooklyn Blackout”."
+      "Less sweet than Brooklyn Blackout."
     ],
-    "unspecified": "Pan dimensions and the oven temperature unit are not specified. Keep the cake and frosting together.",
+    "unspecified": "Pan dimensions are not specified. Keep the cake and frosting together.",
     "components": [
       {
         "title": "Frosting",
@@ -229,7 +229,7 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Blitz Oreos, add melted butter and press into a pie tin. Bake at 350° for 8–10 minutes (unit not written).",
+      "Blitz Oreos, add melted butter and press into a pie tin. Bake at 350°F for 8–10 minutes.",
       "Whisk eggs, sugar and milks, then heat in a double boiler to 167°F. Pour over the chocolate, mix, then add vanilla and salt.",
       "Pour into the chilled crust.",
       "Cover with Saran wrap.",
@@ -237,10 +237,10 @@ export const recipes = [
       "Serve with whipped cream and chocolate shavings."
     ],
     "notes": [
-      "Margin: some of the Oreo amount can be replaced with Nilla wafers.",
-      "Small-pie note is headed “⅓ of recipe (for 1 small pie)”: 8 Oreos, 20g butter, 1 egg, 15g sugar (revised), ⅓ cup whole milk, ⅓ cup cream and 133g chocolate. These are handwritten values, not a calculated scaling."
+      "Some of the Oreo amount can be replaced with Nilla wafers.",
+      "⅓ of recipe (for 1 small pie): 8 Oreos, 20g butter, 1 egg, 15g sugar, ⅓ cup whole milk, ⅓ cup cream and 133g chocolate."
     ],
-    "unspecified": "Small-pie vanilla/salt quantities and crust temperature unit are not supplied. A “half” annotation also appears near filling sugar; its scope is unclear. No extra scaling is inferred.",
+    "unspecified": "Small-pie vanilla/salt quantities need confirmation. Whether “half” applies to filling sugar is unclear.",
     "components": [
       {
         "title": "Crust",
@@ -276,7 +276,7 @@ export const recipes = [
           ],
           [
             "Unspecified",
-            "chocolate shavings, mentioned in method"
+            "chocolate shavings"
           ]
         ]
       }
@@ -299,11 +299,11 @@ export const recipes = [
       ],
       [
         "Unspecified tbsp",
-        "cornstarch; no number written"
+        "cornstarch"
       ],
       [
         "Unspecified tbsp",
-        "flour; no number written"
+        "flour"
       ],
       [
         "1 tbsp",
@@ -315,12 +315,10 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Bake at 375° for “45 min?” as written."
+      "Bake at 375°F for 45 minutes? Confirm bake duration."
     ],
-    "notes": [
-      "Title annotation appears to read “Mini”."
-    ],
-    "unspecified": "Blueberries are named only in the title: their amount is missing. Crust, assembly method and temperature unit are not supplied. The written bake duration is explicitly questioned in the notebook.",
+    "notes": [],
+    "unspecified": "Blueberry amount, crust and assembly method need confirmation. Bake duration is uncertain.",
     "components": [
       {
         "title": "Crumble",
@@ -366,7 +364,7 @@ export const recipes = [
       ],
       [
         "About 2–2.25 cups",
-        "oats, as written"
+        "oats"
       ],
       [
         "1 tsp",
@@ -467,12 +465,12 @@ export const recipes = [
       "Whisk the wet ingredients together without the zucchini.",
       "Sift in the dry ingredients.",
       "Fold everything together with the zucchini.",
-      "Bake at 350° until golden."
+      "Bake at 350°F until golden."
     ],
     "notes": [
-      "Yield note: 2 mini loaves."
+      "Yield: 2 mini loaves."
     ],
-    "unspecified": "Baking duration, mini-loaf pan dimensions and oven temperature unit are unspecified.",
+    "unspecified": "Baking duration and mini-loaf pan dimensions are unspecified.",
     "components": []
   },
   {
@@ -492,7 +490,7 @@ export const recipes = [
       ],
       [
         "15g",
-        "sugar (original 25g noted)"
+        "sugar (alternate amount: 25g)"
       ],
       [
         "1 tsp",
@@ -512,7 +510,7 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Preheat oven to 350° (unit not written).",
+      "Preheat oven to 350°F.",
       "Stir crust ingredients, press into a pie pan and chill in the fridge.",
       "Make ganache, pour into the pan with crust, then sprinkle with salt and pecans on top.",
       "Whisk custard ingredients together and pour. Extra crust mixture can go on top.",
@@ -520,9 +518,9 @@ export const recipes = [
     ],
     "notes": [
       "Consider adding a chocolate-chip cookie layer, or chocolate chips.",
-      "Custard margin arrows also show 130g near dark brown sugar and 140g near maple syrup; the main list shows 60g sugar and 50–60g syrup. Neither alternative has been chosen silently."
+      "Custard alternatives: 130g dark brown sugar and 140g maple syrup, compared with 60g sugar and 50–60g syrup. Amounts need confirmation."
     ],
-    "unspecified": "Custard sugar and syrup revisions need confirmation. Pan size and oven temperature unit are unspecified.",
+    "unspecified": "Custard sugar and syrup revisions need confirmation. Pan size is unspecified.",
     "components": [
       {
         "title": "Ganache & pecans",
@@ -554,7 +552,7 @@ export const recipes = [
           ],
           [
             "60g?",
-            "dark brown sugar; also annotated 130g"
+            "dark brown sugar; alternate amount: 130g"
           ],
           [
             "¼ tsp",
@@ -566,7 +564,7 @@ export const recipes = [
           ],
           [
             "50–60g?",
-            "maple syrup; also annotated 140g"
+            "maple syrup; alternate amount: 140g"
           ],
           [
             "4",
@@ -624,12 +622,12 @@ export const recipes = [
       "Cream sugar and butter until light.",
       "Sift in flour and mix in oats, then form into a log.",
       "Wrap the log in Saran wrap and chill in the fridge for at least 30 minutes.",
-      "When ready, cut ½ cm thick slices and bake at 350° until the edge is golden."
+      "When ready, cut ½ cm thick slices and bake at 350°F until the edge is golden."
     ],
     "notes": [
-      "Variation note: substitute 9g hojicha and use less sugar. “Optional” is crossed out next to vanilla and salt."
+      "Variation: substitute 9g hojicha and use less sugar. Use vanilla and salt."
     ],
-    "unspecified": "The hojicha substitution target and reduced sugar quantity are unclear. Bake duration and temperature unit are not supplied.",
+    "unspecified": "The hojicha substitution target and reduced sugar quantity are unclear. Bake duration is not supplied.",
     "components": []
   },
   {
@@ -685,11 +683,11 @@ export const recipes = [
       "Mix in ground pistachios, milk, vanilla and lemon zest.",
       "Mix the dry ingredients together, then fold into the wet ingredients.",
       "Pour into a greased Bundt pan.",
-      "Bake at 350° for at least 30–40 minutes. Cool inverted.",
+      "Bake at 350°F for at least 30–40 minutes. Cool inverted.",
       "For icing, whisk everything together and pour over the cake."
     ],
     "notes": [],
-    "unspecified": "Bundt pan dimensions and oven temperature unit are not specified.",
+    "unspecified": "Bundt pan dimensions are not specified.",
     "components": [
       {
         "title": "Icing",
@@ -749,7 +747,7 @@ export const recipes = [
       ],
       [
         "¾ cup?",
-        "packed brown sugar; numerator overwritten"
+        "packed brown sugar; amount needs confirmation"
       ],
       [
         "1 large",
@@ -768,7 +766,7 @@ export const recipes = [
       "Serve with sauce, or take out early and finish baking with sauce."
     ],
     "notes": [],
-    "unspecified": "The brown-sugar numerator is overwritten and appears to be ¾; confirm before baking. Cake bake duration, pan size and the alternate sauce-finish timing are unspecified.",
+    "unspecified": "Brown sugar may be ¾ cup; confirm before baking. Cake bake duration, pan size and the alternate sauce-finish timing need confirmation.",
     "components": [
       {
         "title": "Sauce",
@@ -829,9 +827,9 @@ export const recipes = [
       "Chill in the fridge at least overnight."
     ],
     "notes": [
-      "Dish note: 9 × 13."
+      "Dish: 9 × 13."
     ],
-    "unspecified": "Pudding preparation liquid and amounts are not listed; the source refers to the package instructions.",
+    "unspecified": "Follow the package instructions for pudding preparation liquid and amounts.",
     "components": []
   },
   {
@@ -887,7 +885,7 @@ export const recipes = [
       "Bake until golden on top."
     ],
     "notes": [],
-    "unspecified": "Chocolate chips appear in the title but no amount is listed. Mixing/assembly instructions, pan size and bake duration are not supplied.",
+    "unspecified": "Chocolate chip amount, mixing/assembly instructions, pan size and bake duration need confirmation.",
     "components": []
   },
   {
@@ -936,10 +934,8 @@ export const recipes = [
       "Separately beat eggs, yolks, sugar and salt until pale.",
       "Fold everything together and bake until tops are set."
     ],
-    "notes": [
-      "“Lava” is the corrected word in the handwritten title."
-    ],
-    "unspecified": "The source does not give pan size, yield, bake duration or a separate espresso-addition step.",
+    "notes": [],
+    "unspecified": "Pan size, yield, bake duration and when to add espresso need confirmation.",
     "components": []
   },
   {
@@ -985,7 +981,7 @@ export const recipes = [
       "Dust cocoa powder on top."
     ],
     "notes": [],
-    "unspecified": "Ladyfinger package size, espresso volume and a separate vanilla-addition step are unspecified. Cream cheese is explicitly written; it has not been changed to mascarpone.",
+    "unspecified": "Ladyfinger package size, espresso volume and when to add vanilla need confirmation.",
     "components": []
   },
   {
@@ -1025,7 +1021,7 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Preheat oven to 175°C; handwritten note: 350°F. Line three baking sheets with parchment paper and set aside.",
+      "Preheat oven to 350°F / 175°C. Line three baking sheets with parchment paper and set aside.",
       "In a medium bowl mix flour, baking soda, baking powder and salt. Set aside.",
       "Beat butter and sugar in a mixing machine with paddle until puffy.",
       "Add whole eggs one at a time and mix well.",
@@ -1034,11 +1030,11 @@ export const recipes = [
       "Bake about 12–15 minutes until golden brown. Let cool."
     ],
     "notes": [
-      "Handwritten half batch: 250g butter, 250g sugar, 1 egg, 275g flour, 5g baking soda, 2.5g salt and 200g cornflakes.",
-      "Cake-flour substitution note: 275g = 234g regular flour + 41g cornstarch.",
-      "Cornflakes are noted as “in crust”; a following word is crossed out."
+      "Half batch: 250g butter, 250g sugar, 1 egg, 275g flour, 5g baking soda, 2.5g salt and 200g cornflakes.",
+      "Cake-flour substitution: 275g = 234g regular flour + 41g cornstarch.",
+      "Cornflakes: in crust."
     ],
-    "unspecified": "The printed method mentions baking powder, but the ingredient list supplies no baking-powder quantity. A revised sugar note beside 250g is unclear; no replacement amount has been inferred.",
+    "unspecified": "Baking powder quantity needs confirmation. The alternate sugar amount near 250g is unclear.",
     "components": []
   },
   {
@@ -1078,10 +1074,8 @@ export const recipes = [
       ]
     ],
     "steps": [],
-    "notes": [
-      "A separately titled marinade on the same notebook page as Spring roll shrimp and Crab Cakes."
-    ],
-    "unspecified": "No quantities or method are supplied. “Garlic cubes” is retained as written; it has not been changed to cloves.",
+    "notes": [],
+    "unspecified": "Quantities and method need confirmation.",
     "components": []
   },
   {
@@ -1093,15 +1087,15 @@ export const recipes = [
     "ingredients": [
       [
         "2⅓ cups (380g)",
-        "bread flour, as written"
+        "bread flour"
       ],
       [
         "1 tbsp",
-        "sugar, revised from crossed-out ¼ cup (60g)"
+        "sugar; alternate amount: ¼ cup (60g)"
       ],
       [
         "1 tsp (3g)",
-        "salt, as written"
+        "salt"
       ],
       [
         "½ cup (120g)",
@@ -1131,12 +1125,12 @@ export const recipes = [
       "Proof until doubled in size.",
       "Shape into rolls, or divide into thirds and roll into a loaf pan.",
       "Proof for another hour until doubled. Brush with egg wash.",
-      "Bake at 350° for 20 minutes (unit not written)."
+      "Bake at 350°F for 20 minutes."
     ],
     "notes": [
-      "The cup and gram amounts for bread flour and salt are copied as written; they have not been reconciled."
+      "Cup and gram amounts for bread flour and salt may differ; verify before using."
     ],
-    "unspecified": "The yeast line is heavily revised: “2 tsp” appears above the crossed-out original amount, and “instant yeast” remains legible. Dry milk powder amount, pan size and oven temperature unit are not specified.",
+    "unspecified": "Instant yeast may be 2 tsp; confirm the amount. Dry milk powder amount and pan size need confirmation.",
     "components": [
       {
         "title": "Tangzhong",
@@ -1160,11 +1154,11 @@ export const recipes = [
         "ingredients": [
           [
             "2 tsp?",
-            "instant yeast; revised amount needs confirmation"
+            "instant yeast; amount needs confirmation"
           ],
           [
             "2 tbsp (20g)",
-            "warm water, as written"
+            "warm water"
           ]
         ]
       }
@@ -1225,10 +1219,8 @@ export const recipes = [
       "Brush with egg wash.",
       "Bake for 20–25 minutes."
     ],
-    "notes": [
-      "Title annotation: “My edit”."
-    ],
-    "unspecified": "Egg-wash quantities and muffin-tin size are unspecified. The alternate buttermilk note says “milk + ½ tsp lemon juice”; no separate milk quantity is given.",
+    "notes": [],
+    "unspecified": "Egg-wash quantities and muffin-tin size need confirmation. Buttermilk alternative: milk + ½ tsp lemon juice; milk quantity needs confirmation.",
     "components": []
   },
   {
@@ -1258,12 +1250,12 @@ export const recipes = [
     "steps": [
       "Mix everything except the starter for 30 minutes–1 hour, then add starter. Use the KitchenAid dough hook to mix, speed 2.",
       "Stretch and fold, then bulk ferment.",
-      "The bake note reads: “475 oven: 450 for 25 min w/lid on then 425 for 30 min w/lid off.”"
+      "475°F oven: 450°F for 25 min w/lid on then 425°F for 30 min w/lid off."
     ],
     "notes": [
       "Variations during shaping: chocolate chip + orange peel; cheddar + jalapeño."
     ],
-    "unspecified": "The exact meaning of “475 oven” and all temperature units need confirmation. Stretch/fold schedule, bulk fermentation duration, shaping and proofing details are not supplied. Variation quantities are unspecified.",
+    "unspecified": "The exact meaning of “475°F oven” needs confirmation. Stretch/fold schedule, bulk fermentation duration, shaping and proofing details are not supplied. Variation quantities are unspecified.",
     "components": []
   },
   {
@@ -1291,7 +1283,7 @@ export const recipes = [
       ],
       [
         "¼ tbsp?",
-        "sugar; handwriting needs confirmation"
+        "sugar; amount needs confirmation"
       ],
       [
         "2 tsp",
@@ -1319,9 +1311,9 @@ export const recipes = [
     ],
     "notes": [
       "For sweet: add vanilla and more sugar.",
-      "Butter substitution margin reads “0.75% butter aka ⅜ cup & rest 0.25% Greek yogurt”; preserved as a note, not calculated."
+      "Butter substitution: 0.75% butter aka ⅜ cup & rest 0.25% Greek yogurt."
     ],
-    "unspecified": "The last word of the overwritten title appears to be “scones”; confirm it. Sugar appears to read “¼ tbsp”, which is unusual but is not silently corrected. Added vanilla/sugar and yogurt quantities are not fully specified; the egg-wash application step is not written.",
+    "unspecified": "Sugar may be ¼ tbsp; confirm the amount. Added vanilla/sugar and yogurt quantities and when to apply egg wash need confirmation.",
     "components": []
   },
   {
@@ -1405,12 +1397,12 @@ export const recipes = [
       "Refrigerate for at least 6 hours to overnight, or freeze for later use."
     ],
     "notes": [
-      "A separate “(8)” is written beside the 10 tbsp butter line; its meaning is unclear."
+      "Butter quantity needs confirmation: 10 tbsp, with an unclear alternate “(8)”."
     ],
     "unspecified": "No rolling, pan size or baking instructions are supplied. Do not apply another recipe’s baking settings automatically.",
     "components": [
       {
-        "title": "Double batch, as written",
+        "title": "Double batch",
         "ingredients": [
           [
             "381g (3 cups)",
@@ -1469,12 +1461,12 @@ export const recipes = [
       ]
     ],
     "steps": [
-      "Blitz in a blender, then bake at 375° until puffed and golden."
+      "Blitz in a blender, then bake at 375°F until puffed and golden."
     ],
     "notes": [
       "Brazilian cheese bites."
     ],
-    "unspecified": "Bake duration, pan type/size and oven temperature unit are not supplied.",
+    "unspecified": "Bake duration and pan type/size are not supplied.",
     "components": []
   },
   {
@@ -1608,16 +1600,16 @@ export const recipes = [
       ],
       [
         "Unspecified",
-        "crust, mentioned in method"
+        "crust"
       ]
     ],
     "steps": [
       "Cook all moisture out of the base ingredients.",
-      "Blind bake crust at 375° for 3 minutes, then poke holes with a fork and bake another 5–10 minutes until golden.",
-      "Add filling, then pour the egg mixture on top. Put back into a 350° oven for 40–50 minutes until set and golden."
+      "Blind bake crust at 375°F for 3 minutes, then poke holes with a fork and bake another 5–10 minutes until golden.",
+      "Add filling, then pour the egg mixture on top. Put back into a 350°F oven for 40–50 minutes until set and golden."
     ],
     "notes": [],
-    "unspecified": "Base quantities, crust amount/type, pan size and temperature units are not specified.",
+    "unspecified": "Base quantities, crust amount/type and pan size are not specified.",
     "components": []
   }
 ];

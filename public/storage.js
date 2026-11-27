@@ -1,4 +1,4 @@
-import {validateSections} from './sections.js';
+import {validateSections,migrateSectionDefaults,adoptLegacySections} from './sections.js';
 export const DATA_SCHEMA = 1;
 const DB_NAME = 'recipe-personal-notebook';
 let database;
@@ -33,7 +33,7 @@ export async function restoreRecipes(recipes,sections){
 }
 export async function saveBookState(recipes,sections){
  const db=await openDatabase();if(sections)validateSections(sections);
- await new Promise((resolve,reject)=>{const tx=db.transaction(sections?['recipes','settings']:['recipes'],'readwrite');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections)tx.objectStore('settings').put(sections,'sections');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});
+ await new Promise((resolve,reject)=>{const tx=db.transaction(sections?['recipes','settings']:['recipes'],'readwrite');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});
 }
 export async function getSetting(key,fallback){const db=await openDatabase();const value=await result(db.transaction('settings').objectStore('settings').get(key));return value??fallback;}
 export async function setSetting(key,value){await transaction('settings','readwrite',store=>store.put(value,key));}
@@ -59,7 +59,15 @@ export function previewMerge(current,incoming,policy){
 export async function resetRecipe(recipe){await transaction('recipes','readwrite',store=>store.put({id:recipe.id,origin:'bundled',modified:false,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA}));}
 
 export function orderRecipes(recipes){
- const chapters=['Desserts','Sides','Main'];
+ const chapters=['Main','Sides','Desserts'];
  const cuisines=[...new Set(['Indian','Chinese',...recipes.filter(r=>r.category==='Main').map(r=>r.cuisine||'Other')])];
  return [...recipes].sort((a,b)=>chapters.indexOf(a.category)-chapters.indexOf(b.category)||(a.category==='Main'?cuisines.indexOf(a.cuisine||'Other')-cuisines.indexOf(b.cuisine||'Other'):0));
+}
+
+export async function initializeSections(recipes){
+ const db=await openDatabase();let sections;
+ await new Promise((resolve,reject)=>{const tx=db.transaction('settings','readwrite');const settings=tx.objectStore('settings');const saved=settings.get('sections');const version=settings.get('sectionOrderVersion');let pending=2;
+ const ready=()=>{if(--pending)return;try{sections=validateSections(migrateSectionDefaults(saved.result||adoptLegacySections(recipes),version.result));settings.put(sections,'sections');settings.put(2,'sectionOrderVersion');}catch(error){tx.abort();reject(error);}};
+ saved.onsuccess=ready;version.onsuccess=ready;tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Section migration was not saved.'));
+ });return sections;
 }

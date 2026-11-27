@@ -1,4 +1,4 @@
-export const defaultSections=[{id:'desserts',name:'Desserts',parentId:null},{id:'sides',name:'Sides',parentId:null},{id:'main',name:'Main',parentId:null},{id:'main-indian',name:'Indian',parentId:'main'},{id:'main-chinese',name:'Chinese',parentId:'main'},{id:'main-other',name:'Other',parentId:'main'}];
+export const defaultSections=[{id:'main',name:'Main',parentId:null},{id:'main-indian',name:'Indian',parentId:'main'},{id:'main-chinese',name:'Chinese',parentId:'main'},{id:'main-other',name:'Other',parentId:'main'},{id:'sides',name:'Sides',parentId:null},{id:'desserts',name:'Desserts',parentId:null}];
 export function validateSections(value){
  if(!Array.isArray(value)||!value.length||value.length>100)throw Error('A notebook needs 1–100 sections.');
  const ids=new Set();const names=new Set();
@@ -17,3 +17,19 @@ export function removeSection(sections,recipes,id,destinationId){const removed=n
 export function adoptLegacySections(recipes){const sections=structuredClone(defaultSections);for(const recipe of recipes){let root=sections.find(s=>!s.parentId&&s.name===recipe.category);if(!root){root={id:'legacy-root-'+sections.length,name:recipe.category,parentId:null};sections.push(root);}if(recipe.cuisine&&!sections.some(s=>s.parentId===root.id&&s.name===recipe.cuisine))sections.push({id:'legacy-cuisine-'+sections.length,name:recipe.cuisine,parentId:root.id});}return validateSections(sections);}
 
 export function restoreLayoutSnapshot(snapshot,current){const saved=new Map(snapshot.recipes.map(r=>[r.id,r]));return current.map(recipe=>{const prior=saved.get(recipe.id);return prior?{...recipe,category:prior.category,cuisine:prior.cuisine,sectionId:prior.sectionId,bookOrder:prior.bookOrder}:recipe;});}
+
+// Only the exact former defaults migrate. Custom trees and explicitly saved layouts stay put.
+export function migrateSectionDefaults(sections,version){
+ const oldIds=['desserts','sides','main','main-indian','main-chinese','main-other'];
+ const untouched=Array.isArray(sections)&&sections.length===oldIds.length&&sections.every((s,i)=>s.id===oldIds[i]&&defaultSections.some(d=>d.id===s.id&&d.name===s.name&&d.parentId===s.parentId));
+ return !version&&untouched?structuredClone(defaultSections):sections;
+}
+export function moveSection(sections,id,beforeId=null){
+ const moved=sections.find(s=>s.id===id);if(!moved)throw Error('Section not found.');
+ const siblings=sections.filter(s=>s.parentId===moved.parentId);const before=beforeId&&siblings.find(s=>s.id===beforeId);
+ if(beforeId&&!before)throw Error('Move sections within the same level.');
+ if(beforeId===id)return structuredClone(sections);
+ const ordered=siblings.filter(s=>s.id!==id);const index=before?ordered.findIndex(s=>s.id===beforeId):ordered.length;ordered.splice(index,0,moved);
+ const roots=moved.parentId?sections.filter(s=>!s.parentId):ordered;
+ return validateSections(roots.flatMap(root=>[root,...(root.id===moved.parentId?ordered:sections.filter(s=>s.parentId===root.id))]));
+}

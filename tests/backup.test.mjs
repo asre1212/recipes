@@ -41,5 +41,5 @@ test('new recipe editor renders and existing component ingredients remain editab
 test('new entries and cuisine changes keep footer page order aligned with contents',async()=>{
  const {orderRecipes}=await import('../public/storage.js');
  const rows=[{id:'other',category:'Main',cuisine:'Other'},{id:'side',category:'Sides'},{id:'dessert',category:'Desserts'},{id:'indian',category:'Main',cuisine:'Indian'},{id:'chinese',category:'Main',cuisine:'Chinese'}];
- assert.deepEqual(orderRecipes(rows).map(r=>r.id),['dessert','side','indian','chinese','other']);
+ assert.deepEqual(orderRecipes(rows).map(r=>r.id),['indian','chinese','other','side','dessert']);
 });

@@ -16,3 +16,15 @@ test('IndexedDB preserves edits, local additions, sections/order and preferences
  // Cancel/undo uses a full, atomic saved snapshot and retains all recipe IDs.
  await saveBookState(backup.recipes,backup.sections);assert.deepEqual(arrangeBook(await loadLibrary(base.map(r=>r.id)),await getSetting('sections')).map(r=>r.id),library.map(r=>r.id));
 });
+
+
+test('section migration is one-time, durable, and backup restore retains an explicit older order',async()=>{
+ const {initializeSections}=await import('../public/storage.js');const {moveSection}=await import('../public/sections.js');
+ const old=['desserts','sides','main','main-indian','main-chinese','main-other'].map(id=>defaultSections.find(s=>s.id===id));
+ await setSetting('sections',old);await setSetting('sectionOrderVersion',null);
+ const before=await loadLibrary();const migrated=await initializeSections(before);assert.deepEqual(migrated,defaultSections);assert.deepEqual(await loadLibrary(),before);
+ const custom=moveSection(migrated,'sides','main');await saveBookState(before,custom);await initializeSections(before);assert.deepEqual(await getSetting('sections'),custom);
+ await initializeLibrary(base);assert.deepEqual(await getSetting('sections'),custom);
+ const backup=makeBackup(before,custom);const decoded=await decryptBackup(await encryptBackup(backup,'section-order-test-passphrase'),'section-order-test-passphrase');await restoreRecipes(validateBackup(decoded),decoded.sections);assert.deepEqual(await initializeSections(await loadLibrary()),custom);
+ await restoreRecipes(before,old);assert.deepEqual(await initializeSections(before),old);
+});

@@ -86,3 +86,15 @@ every asset with the release cache ID in its URL and `cache: no-store`, then sto
 it under the canonical offline URL. The offline test asserts this bypass for every
 precache request. A failed asset download rejects installation rather than claiming
 a complete update. This does not touch IndexedDB owner records or settings.
+
+## Hamburger menu, chapter order and graphite sketches
+
+- Inspected the owner's marked JPEG. Contents, Write a recipe, Backups, Keep this book, contextual Edit recipe and Restore original are now in one three-line dropdown. Escape closes it and returns focus; navigation closes it. The chapter label remains outside the recipe sheet.
+- Removed the rendered source notation; internal source fields and intake mappings remain unchanged.
+- Default top-level order is Main → Sides → Desserts. Only an exact untouched former default tree migrates, in one IndexedDB transaction with an order-version marker. Custom names, removed/added sections, saved custom order, local recipes and ingredient edits remain. Restoring a backup saves its explicit order, including an older order, without reapplying the default migration.
+- Reorder mode includes a compact section-order panel for phone dragging. Whole chapters move with cuisine descendants; cuisine siblings can move within their parent. Up/Down buttons work by touch or keyboard. Undo and Cancel retain the existing safety behavior. Recipe page numbers and previous/next links derive from the same arranged book.
+- 18 automated checks pass, including new default migration, explicit old-order restore, custom section order, whole-chapter/subsection moves, IndexedDB persistence across bundle updates and encrypted backups.
+- Browser-tested local menu navigation and Escape; Enter on Move section Main down; reload retained custom order and all 27 synthetic preview entries. Phone-width pointer drag moved Main before Sides; the saved order and first-page number were verified after reload. Phone body width and scroll width both 375px inside a 390px review frame (scrollbar excluded).
+- Inspected all three new graphite masters at full resolution and their actual cookie, Bundt cake and milk-bread rendering at phone width. The cake matches the supplied Bundt method. Only three supplied pages contain drawings. Optimized transparent WebP assets total 635,510 bytes and are included in the service-worker cache. See food-sketches.md for the generation prompt set.
+- Compared all 26 recipes with the preceding release, excluding only illustration path/alt metadata: titles, quantities, method, components, uncertainty notes and internal provenance are unchanged. Cover artwork is unchanged.
+- Physical iPhone, Safari and an installed iOS Home Screen app are unavailable in this environment; phone-width browser/pointer tests are not a substitute for those device checks.

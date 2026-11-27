@@ -21,7 +21,7 @@ export const recipes = [
     "title": "Brown Butter Miso Chocolate Chip Cookies",
     "category": "Desserts",
     "cuisine": null,
-    "illustration": "assets/cookies.svg",
+    "illustration": "assets/cookies-graphite.webp",
     "ingredients": [
       [
         "½ cup",
@@ -709,8 +709,8 @@ export const recipes = [
         ]
       }
     ],
-    "illustration": "assets/cake.svg",
-    "illustrationAlt": "A hand-drawn pistachio cake with icing"
+    "illustration": "assets/cake-graphite.webp",
+    "illustrationAlt": "A shaded graphite pencil drawing of a pistachio Bundt cake with lemon icing"
   },
   {
     "id": "sticky-toffee-pudding",
@@ -1169,8 +1169,8 @@ export const recipes = [
         ]
       }
     ],
-    "illustration": "assets/bread.svg",
-    "illustrationAlt": "A hand-drawn golden loaf of milk bread"
+    "illustration": "assets/bread-graphite.webp",
+    "illustrationAlt": "A shaded graphite pencil drawing of a milk bread loaf and slice"
   },
   {
     "id": "copycat-mary-os-irish-soda-bread-scones",

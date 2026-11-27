@@ -3,7 +3,7 @@ import {defaultSections,validateSections,arrangeBook,moveRecipe,removeSection,ad
 const recipe=(id,category='Desserts',cuisine=null)=>({id,title:id,category,cuisine,ingredients:[['1','ingredient']],steps:['Mix.'],notes:['Keep original'],unspecified:'Time unspecified.'});
 const rows=[recipe('one'),recipe('two'),recipe('three','Main','Indian')];
 test('pointer move operation reorders within chapter and moves into an empty cuisine with stable IDs',()=>{
- let moved=moveRecipe(rows,'two','desserts','one',defaultSections);assert.deepEqual(moved.map(r=>r.id),['two','one','three']);
+ let moved=moveRecipe(rows,'two','desserts','one',defaultSections);assert.deepEqual(moved.map(r=>r.id),['three','two','one']);
  moved=moveRecipe(moved,'one','main-chinese',null,defaultSections);const one=moved.find(r=>r.id==='one');assert.equal(one.category,'Main');assert.equal(one.cuisine,'Chinese');assert.equal(one.sectionId,'main-chinese');assert.deepEqual(one.ingredients,rows[0].ingredients);assert.equal(new Set(moved.map(r=>r.id)).size,3);
  assert.deepEqual(arrangeBook(JSON.parse(JSON.stringify(moved)),defaultSections).map(r=>r.id),moved.map(r=>r.id));
 });
@@ -23,4 +23,25 @@ test('invalid section trees rejected; legacy custom categories/cuisines migrate 
 test('cancelling layout changes preserves recipe edits and additions made during reorder mode',async()=>{
  const {restoreLayoutSnapshot}=await import('../public/sections.js');const snapshot={recipes:structuredClone(rows),sections:defaultSections};const edited=moveRecipe(rows,'one','sides',null,defaultSections).map(r=>r.id==='one'?{...r,ingredients:[['2 cups','changed ingredient']],notes:['Edited during reorder']}:r);edited.push(recipe('new-local'));
  const restored=restoreLayoutSnapshot(snapshot,edited);assert.equal(restored.find(r=>r.id==='one').category,'Desserts');assert.deepEqual(restored.find(r=>r.id==='one').ingredients,[['2 cups','changed ingredient']]);assert.deepEqual(restored.find(r=>r.id==='one').notes,['Edited during reorder']);assert.ok(restored.find(r=>r.id==='new-local'));
+});
+
+
+test('new defaults migrate only untouched legacy sections; explicit saved or custom orders survive',async()=>{
+ const {migrateSectionDefaults,moveSection}=await import('../public/sections.js');
+ const old=['desserts','sides','main','main-indian','main-chinese','main-other'].map(id=>defaultSections.find(s=>s.id===id));
+ assert.deepEqual(defaultSections.filter(s=>!s.parentId).map(s=>s.name),['Main','Sides','Desserts']);
+ assert.deepEqual(migrateSectionDefaults(old,null),defaultSections);
+ assert.deepEqual(migrateSectionDefaults(old,2),old);
+ const custom=moveSection(defaultSections,'sides','main');assert.deepEqual(migrateSectionDefaults(custom,null),custom);
+ assert.deepEqual(migrateSectionDefaults([...old,{id:'breakfast',name:'Breakfast',parentId:null}],null).at(-1).id,'breakfast');
+ assert.deepEqual(migrateSectionDefaults(old.map(s=>s.id==='main'?{...s,name:'Mains'}:s),null).map(s=>s.name),['Desserts','Sides','Mains','Indian','Chinese','Other']);
+});
+test('whole chapters move with descendants, preserve edits and renumber book order immediately',async()=>{
+ const {moveSection}=await import('../public/sections.js');
+ let sections=moveSection(defaultSections,'desserts','main');assert.deepEqual(sections.slice(0,3).map(s=>s.id),['desserts','main','main-indian']);
+ const ordered=arrangeBook(rows,sections);assert.deepEqual(ordered.map(r=>r.id),['one','two','three']);assert.deepEqual(ordered[0].ingredients,rows[0].ingredients);
+ sections=moveSection(sections,'main',null);assert.deepEqual(sections.map(s=>s.id),['desserts','sides','main','main-indian','main-chinese','main-other']);
+ sections=moveSection(sections,'main-chinese','main-indian');assert.deepEqual(sections.filter(s=>s.parentId==='main').map(s=>s.id),['main-chinese','main-indian','main-other']);
+ assert.throws(()=>moveSection(sections,'main','main-indian'),/same level/);
+ assert.deepEqual(moveSection(sections,'main','main'),sections);
 });

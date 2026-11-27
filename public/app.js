@@ -1,7 +1,7 @@
-import {defaultSections,arrangeBook,adoptLegacySections} from './sections.js';
+import {defaultSections,arrangeBook} from './sections.js';
 import {contentsPage,bindContents} from './contents.js';
 import {recipes as bundledRecipes} from './recipes.js';
-import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe,orderRecipes,saveBookState} from './storage.js';
+import {initializeLibrary,loadLibrary,getSetting,resetRecipe,saveBookState,initializeSections} from './storage.js';
 import {editorPage,bindEditor,backupPage,bindBackup,hasDraft,discardDraft} from './kitchen.js';
 const APP_BUILD='development';
 document.documentElement.dataset.appBuild=APP_BUILD;
@@ -21,8 +21,8 @@ const ingredientList = items => `<ul>${items.map(([amount,name])=>`<li><span cla
 const methodList = steps => `<ol>${steps.map(step=>`<li>${escape(step)}</li>`).join('')}</ol>`;
 function recipePage(r) {
   const index = recipes.indexOf(r);
-  const illustration=r.illustration||bundledRecipes.find(b=>b.id===r.id)?.illustration;
-  return `<div class="recipe-actions"><span class="recipe-chapter">${escape(r.category)}${r.cuisine ? ' · '+escape(r.cuisine):''}</span><a href="#edit/${escape(r.id)}">Edit recipe</a>${r.overridden&&bundledRecipes.some(b=>b.id===r.id)?'<button id="restore-original">Restore original</button>':''}</div><article class="paper recipe"><div class="eyebrow">FROM THE RECIPE NOTEBOOK</div><header class="recipe-heading"><h1>${r.title==='Brown Butter Miso Chocolate Chip Cookies' ? 'Brown Butter Miso<br>Chocolate Chip Cookies' : escape(r.title)}</h1><div class="title-underline" aria-hidden="true"></div></header><div class="recipe-grid ${r.notes.length || illustration ? '' : 'no-margin'}"><section class="ingredients"><h2>Ingredients</h2>${ingredientList(r.ingredients)}${(r.components||[]).map(c=>`<section class="component"><h3>${escape(c.title)}</h3>${ingredientList(c.ingredients)}</section>`).join('')}</section><aside class="margin">${r.notes.length ? `<div class="margin-note"><h2>Margin notes</h2>${r.notes.map(n=>`<p>${escape(n)}</p>`).join('')}</div>` : ''}${illustration ? `<img class="dish-sketch" src="${escape(illustration)}" width="340" height="220" alt="${escape(r.illustrationAlt || bundledRecipes.find(b=>b.id===r.id)?.illustrationAlt || 'A hand-drawn pair of chocolate-chip cookies')}">` : ''}</aside></div><section class="method"><h2>Method</h2>${r.steps.length ? methodList(r.steps) : '<p class="empty">No method supplied in the notebook.</p>'}${(r.components||[]).filter(c=>c.steps?.length).map(c=>`<h3>${escape(c.title)}</h3>${methodList(c.steps)}`).join('')}</section>${r.unspecified ? `<aside class="unspecified"><p>${escape(r.unspecified).replace(/^(\*.*?number\.)/,'<em>$1</em><br>')}</p></aside>` : ''}</article><div class="recipe-outside-footer"><p class="source-note">Notebook source: ${escape(r.source || 'starter cookie page')}</p>${footer(pageNumber(r),index ? '#recipe/'+recipes[index-1].id : '#contents',recipes[index+1] ? '#recipe/'+recipes[index+1].id : null)}</div>`;
+  const illustration=bundledRecipes.find(b=>b.id===r.id)?.illustration||r.illustration;
+  return `<div class="recipe-actions"><span class="recipe-chapter">${escape(r.category)}${r.cuisine ? ' · '+escape(r.cuisine):''}</span></div><article class="paper recipe"><div class="eyebrow">FROM THE RECIPE NOTEBOOK</div><header class="recipe-heading"><h1>${r.title==='Brown Butter Miso Chocolate Chip Cookies' ? 'Brown Butter Miso<br>Chocolate Chip Cookies' : escape(r.title)}</h1><div class="title-underline" aria-hidden="true"></div></header><div class="recipe-grid ${r.notes.length || illustration ? '' : 'no-margin'}"><section class="ingredients"><h2>Ingredients</h2>${ingredientList(r.ingredients)}${(r.components||[]).map(c=>`<section class="component"><h3>${escape(c.title)}</h3>${ingredientList(c.ingredients)}</section>`).join('')}</section><aside class="margin">${r.notes.length ? `<div class="margin-note"><h2>Margin notes</h2>${r.notes.map(n=>`<p>${escape(n)}</p>`).join('')}</div>` : ''}${illustration ? `<img class="dish-sketch" src="${escape(illustration)}" width="340" height="220" alt="${escape(r.illustrationAlt || bundledRecipes.find(b=>b.id===r.id)?.illustrationAlt || 'A hand-drawn pair of chocolate-chip cookies')}">` : ''}</aside></div><section class="method"><h2>Method</h2>${r.steps.length ? methodList(r.steps) : '<p class="empty">No method supplied in the notebook.</p>'}${(r.components||[]).filter(c=>c.steps?.length).map(c=>`<h3>${escape(c.title)}</h3>${methodList(c.steps)}`).join('')}</section>${r.unspecified ? `<aside class="unspecified"><p>${escape(r.unspecified).replace(/^(\*.*?number\.)/,'<em>$1</em><br>')}</p></aside>` : ''}</article><div class="recipe-outside-footer">${footer(pageNumber(r),index ? '#recipe/'+recipes[index-1].id : '#contents',recipes[index+1] ? '#recipe/'+recipes[index+1].id : null)}</div>`;
 }
 let currentHash=location.hash||'#cover';
 function render() {
@@ -30,6 +30,9 @@ function render() {
  currentHash=location.hash||'#cover';
  const hash = location.hash || '#cover';
  const recipe = hash.startsWith('#recipe/') && recipes.find(r=>r.id===hash.slice(8));
+ const menuActions=document.querySelector('#recipe-menu-actions');
+ menuActions.innerHTML=recipe?`<a href="#edit/${escape(recipe.id)}">Edit recipe</a>${recipe.overridden&&bundledRecipes.some(b=>b.id===recipe.id)?'<button id="restore-original">Restore original</button>':''}`:'';
+ closeMenu();
  let title;
  if(hash==='#new'||hash.startsWith('#edit/')) {
  const editing=hash.startsWith('#edit/')?recipes.find(r=>r.id===hash.slice(6)):null;
@@ -54,7 +57,15 @@ function render() {
 window.addEventListener('hashchange',render);
 window.addEventListener('beforeunload',e=>{if(hasDraft()){e.preventDefault();e.returnValue='';}});
 let autoUpdate=true;
-try{let savedSections=await getSetting('sections',null);if(!savedSections){savedSections=adoptLegacySections(await loadLibrary(bundledRecipes.map(r=>r.id)));await setSetting('sections',savedSections);}sections.push(...savedSections);recipes.push(...arrangeBook(await initializeLibrary(bundledRecipes),sections));autoUpdate=await getSetting('autoUpdate',true);}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeBook(bundledRecipes,sections));document.querySelector('#storage-warning').hidden=false;}
+try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipes.push(...arrangeBook(await initializeLibrary(bundledRecipes),sections));autoUpdate=await getSetting('autoUpdate',true);}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeBook(bundledRecipes,sections));document.querySelector('#storage-warning').hidden=false;}
+const menuToggle=document.querySelector('#menu-toggle');
+const notebookMenu=document.querySelector('#notebook-menu');
+function closeMenu(returnFocus=false){const toggle=document.querySelector('#menu-toggle');document.querySelector('#notebook-menu').hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open notebook menu');if(returnFocus)toggle.focus();}
+menuToggle.addEventListener('click',()=>{const open=notebookMenu.hidden;notebookMenu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'Close notebook menu':'Open notebook menu');});
+notebookMenu.addEventListener('click',event=>{if(event.target.closest('a,button'))closeMenu();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!notebookMenu.hidden){closeMenu(true);event.preventDefault();}});
+document.addEventListener('click',event=>{if(!event.target.closest('.site-header'))closeMenu();});
+document.addEventListener('focusin',event=>{if(!notebookMenu.hidden&&!event.target.closest('.site-header'))closeMenu();});
 render();
 const help=document.querySelector('#install-help');
 help.addEventListener('click',()=>{const guide=document.querySelector('#install-guide');guide.hidden=!guide.hidden;help.setAttribute('aria-expanded',String(!guide.hidden));});

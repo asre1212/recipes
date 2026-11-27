@@ -50,3 +50,14 @@ html[data-recipe-font="kristi"] .recipe .ingredients ul{font-size:32px}html[data
 .recipe .recipe-grid>.art-tower{height:calc(var(--side-art) * 1.5 + 18px)}.recipe .recipe-grid>.art-tower .dish-sketch{height:calc(var(--side-art) * 1.5)}
 .recipe .recipe-grid>.art-tower:has(.companion-sketch){height:auto;flex-direction:column;gap:14px;padding:9px}
 .recipe .art-tower .companion-sketch{display:block;width:calc(var(--side-art) * .65);height:auto;align-self:flex-end;object-fit:contain;transform:none}
+
+/* Shortbread only: cap above-left, tower nudged right; original image sizes. */
+.recipe .recipe-grid>.art-tower:has(.companion-sketch){display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;gap:10px;padding:0}
+.recipe .art-tower:has(.companion-sketch) .dish-sketch{grid-column:1;grid-row:2;justify-self:end;margin-right:4px}
+.recipe .art-tower .companion-sketch{grid-column:1;grid-row:1;justify-self:start;align-self:start}
+@media(max-width:600px){.recipe .art-tower:has(.companion-sketch) .dish-sketch{margin-right:0}}
+
+/* Reserve visible rotated bounds without narrowing the ingredient column. */
+.recipe .recipe-grid>.art-tower:has(.companion-sketch){grid-template-rows:calc(var(--side-art) * .8) calc(var(--side-art) * 1.34)}
+.recipe .art-tower:has(.companion-sketch) .dish-sketch{width:calc(var(--side-art) * .78);height:calc(var(--side-art) * 1.17);margin-right:calc(var(--side-art) * .14);align-self:center;transform:rotate(15deg)}
+.recipe .art-tower .companion-sketch{margin-left:calc(var(--side-art) * .08);align-self:center;transform:rotate(-15deg)}

@@ -37,3 +37,9 @@ test('new recipe editor renders and existing component ingredients remain editab
  assert.match(editorPage(false),/name="ingredients"/);
  assert.match(editorPage({...recipe,components:[{title:'Icing',ingredients:[['1 cup','sugar']]}]}),/component-ingredients-0/);
 });
+
+test('new entries and cuisine changes keep footer page order aligned with contents',async()=>{
+ const {orderRecipes}=await import('../public/storage.js');
+ const rows=[{id:'other',category:'Main',cuisine:'Other'},{id:'side',category:'Sides'},{id:'dessert',category:'Desserts'},{id:'indian',category:'Main',cuisine:'Indian'},{id:'chinese',category:'Main',cuisine:'Chinese'}];
+ assert.deepEqual(orderRecipes(rows).map(r=>r.id),['dessert','side','indian','chinese','other']);
+});

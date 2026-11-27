@@ -52,3 +52,9 @@ export function previewMerge(current,incoming,policy){
 }
 
 export async function resetRecipe(recipe){await transaction('recipes','readwrite',store=>store.put({id:recipe.id,origin:'bundled',modified:false,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA}));}
+
+export function orderRecipes(recipes){
+ const chapters=['Desserts','Sides','Main'];
+ const cuisines=[...new Set(['Indian','Chinese',...recipes.filter(r=>r.category==='Main').map(r=>r.cuisine||'Other')])];
+ return [...recipes].sort((a,b)=>chapters.indexOf(a.category)-chapters.indexOf(b.category)||(a.category==='Main'?cuisines.indexOf(a.cuisine||'Other')-cuisines.indexOf(b.cuisine||'Other'):0));
+}

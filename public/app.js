@@ -1,8 +1,8 @@
 import {recipes as bundledRecipes, categories} from './recipes.js';
-import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe} from './storage.js';
+import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe,orderRecipes} from './storage.js';
 import {editorPage,bindEditor,backupPage,bindBackup,hasDraft,discardDraft} from './kitchen.js';
 const recipes=[];
-const refreshLibrary=async()=>{const next=await loadLibrary(bundledRecipes.map(r=>r.id));recipes.splice(0,recipes.length,...next);};
+const refreshLibrary=async()=>{const next=await loadLibrary(bundledRecipes.map(r=>r.id));recipes.splice(0,recipes.length,...orderRecipes(next));};
 const book = document.querySelector('#book');
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pageNumber = recipe => recipes.indexOf(recipe) + 3;
@@ -54,16 +54,18 @@ function render() {
 window.addEventListener('hashchange',render);
 window.addEventListener('beforeunload',e=>{if(hasDraft()){e.preventDefault();e.returnValue='';}});
 let autoUpdate=true;
-try{recipes.push(...await initializeLibrary(bundledRecipes));autoUpdate=await getSetting('autoUpdate',true);}catch{recipes.push(...bundledRecipes);document.querySelector('#storage-warning').hidden=false;}
+try{recipes.push(...orderRecipes(await initializeLibrary(bundledRecipes)));autoUpdate=await getSetting('autoUpdate',true);}catch{recipes.push(...bundledRecipes);document.querySelector('#storage-warning').hidden=false;}
 render();
 const help=document.querySelector('#install-help');
 help.addEventListener('click',()=>{const guide=document.querySelector('#install-guide');guide.hidden=!guide.hidden;help.setAttribute('aria-expanded',String(!guide.hidden));});
 let installPrompt;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.querySelector('#install').hidden=false;});
 document.querySelector('#install').addEventListener('click',async()=>{if(!installPrompt)return;await installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;document.querySelector('#install').hidden=true;});
-let registration;let waitingUpdate;let refreshing=false;
+let registration;let waitingUpdate;let refreshing=false;let deferredReload=false;
 function applyWaitingUpdate(){
- if(!waitingUpdate||hasDraft()||document.querySelector('#recipe-form'))return;
+ if(hasDraft()||document.querySelector('#recipe-form'))return;
+ if(deferredReload&&!refreshing){refreshing=true;location.reload();return;}
+ if(!waitingUpdate)return;
  document.querySelector('#update-notice').hidden=false;
  document.querySelector('#update-message').textContent='A new notebook version is ready. Your local recipes are saved.';
  if(autoUpdate)waitingUpdate.postMessage({type:'SKIP_WAITING'});
@@ -76,7 +78,7 @@ async function checkUpdates(){
 document.querySelector('#apply-update').addEventListener('click',()=>{if(!hasDraft()&&!document.querySelector('#recipe-form'))waitingUpdate?.postMessage({type:'SKIP_WAITING'});});
 if('serviceWorker' in navigator){
  const wasControlled=Boolean(navigator.serviceWorker.controller);
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(wasControlled&&!refreshing&&!hasDraft()){refreshing=true;location.reload();}});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(wasControlled&&!refreshing){if(hasDraft()||document.querySelector('#recipe-form'))deferredReload=true;else{refreshing=true;location.reload();}}});
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(async reg=>{
  registration=reg;await navigator.serviceWorker.ready;
  document.querySelector('#offline-state').textContent='Saved for offline reading. Your notebook is ready to travel.';

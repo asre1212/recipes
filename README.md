@@ -19,7 +19,7 @@ On iPhone, open in Safari, choose Share → Add to Home Screen. The service work
 
 Edit `public/recipes.js`, add a stable unique slug, category (`Desserts`, `Sides`, `Main`), optional cuisine, accurate ingredients/steps/notes, and optionally an occasional dish illustration in `public/assets/`. Main recipes are automatically grouped by cuisine; Indian and Chinese start as empty headings. Contents and page numbers are generated from the ordered data. Never add invented recipes or fill unspecified measurements.
 
-Add every new asset to `FILES` in `public/sw.js` and increment its cache version when any deployed app content changes. Hash links such as `#recipe/brown-butter-miso-chocolate-chip-cookies` are directly bookmarkable and work offline.
+Add every new asset to `FILES` in `public/sw.js` The build automatically derives a new offline-cache revision from all app content. Hash links such as `#recipe/brown-butter-miso-chocolate-chip-cookies` are directly bookmarkable and work offline.
 
 See [the saved written recipe style](docs/written-recipe-style.md). The supplied notebook photos yield 26 distinct entries, including the starter cookie recipe. Intake hashes and recipe mapping are recorded in `docs/intake.json`. Its source does not specify oven temperature, bake time, add-in quantities, or when to add sesame paste/milk powder; these remain visibly unspecified.
 

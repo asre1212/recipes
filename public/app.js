@@ -1,3 +1,4 @@
+import {autoBackupPage,bindAutoBackup,startAutoBackup} from './autobackup.js';
 import {trialSection,bindTrials} from './trials.js';
 import {defaultSections,arrangeBook} from './sections.js';
 import {contentsPage,bindContents,contentsMenu} from './contents.js';
@@ -31,7 +32,10 @@ function render() {
  currentHash=location.hash||'#cover';
  const hash = location.hash || '#cover';
  const recipe = hash.startsWith('#recipe/') && recipes.find(r=>r.id===hash.slice(8));
- document.querySelector('#menu-toggle').hidden=hash==='#cover';
+ const coverOpen=hash==='#cover';
+ document.documentElement.dataset.navigation=coverOpen?'cover':'paper';
+ const header=document.querySelector('.site-header');header.hidden=coverOpen;header.inert=coverOpen;
+ document.querySelector('#menu-toggle').hidden=coverOpen;
  document.querySelector('#contents-menu-actions').innerHTML=hash==='#contents'?contentsMenu():'';
  const menuActions=document.querySelector('#recipe-menu-actions');
  menuActions.innerHTML=recipe?`<a href="#edit/${escape(recipe.id)}">Edit recipe</a>${recipe.overridden&&bundledRecipes.some(b=>b.id===recipe.id)?'<button id="restore-original">Restore original</button>':''}`:'';
@@ -43,6 +47,7 @@ function render() {
  book.innerHTML=editorPage(editing,sections);title=editing?'Edit '+editing.title:'Write a recipe';
  bindEditor(editing,async id=>{await refreshLibrary();location.hash='#recipe/'+id;},sections);
  }
+ else if(hash==='#autobackup'){book.innerHTML=autoBackupPage();title='Auto Backup';bindAutoBackup();}
  else if(hash==='#backup'){book.innerHTML=backupPage();title='Backups & updates';bindBackup(recipes,refreshLibrary,checkUpdates,value=>{autoUpdate=value;if(value)applyWaitingUpdate();},{sections:()=>sections});}
  else
  if(hash==='#cover') { book.innerHTML=cover(); title='The notebook'; }
@@ -71,6 +76,7 @@ notebookMenu.addEventListener('click',event=>{if(event.target.closest('a,button'
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!notebookMenu.hidden){closeMenu(true);event.preventDefault();}});
 document.addEventListener('click',event=>{if(!event.target.closest('.site-header'))closeMenu();});
 document.addEventListener('focusin',event=>{if(!notebookMenu.hidden&&!event.target.closest('.site-header'))closeMenu();});
+startAutoBackup();
 render();
 const help=document.querySelector('#install-help');
 help.addEventListener('click',()=>{const guide=document.querySelector('#install-guide');guide.hidden=!guide.hidden;help.setAttribute('aria-expanded',String(!guide.hidden));});
@@ -93,15 +99,22 @@ async function checkUpdates(){
 }
 document.querySelector('#apply-update').addEventListener('click',()=>{if(!hasDraft()&&!document.querySelector('#recipe-form,#trial-form'))waitingUpdate?.postMessage({type:'SKIP_WAITING'});});
 if('serviceWorker' in navigator){
- const wasControlled=Boolean(navigator.serviceWorker.controller);
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(wasControlled&&!refreshing){if(hasDraft()||document.querySelector('#recipe-form,#trial-form'))deferredReload=true;else{refreshing=true;location.reload();}}});
+ // A first uncontrolled page can also contain an older HTTP-cached shell.
+ // Compare worker and shell builds instead of assuming first claim is current.
+ const verifyController=()=>{const worker=navigator.serviceWorker.controller;if(!worker)return;const channel=new MessageChannel();channel.port1.onmessage=event=>{channel.port1.close();if(event.data?.build&&event.data.build!==APP_BUILD&&!refreshing){if(hasDraft()||document.querySelector('#recipe-form,#trial-form'))deferredReload=true;else{refreshing=true;location.reload();}}};worker.postMessage({type:'GET_BUILD'},[channel.port2]);};
+ navigator.serviceWorker.addEventListener('controllerchange',verifyController);
  navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(async reg=>{
- registration=reg;await navigator.serviceWorker.ready;
+ registration=reg;
+ const watchInstalling=()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){waitingUpdate=reg.waiting;applyWaitingUpdate();}});};
+ reg.addEventListener('updatefound',watchInstalling);watchInstalling();
+ await navigator.serviceWorker.ready;verifyController();
  document.querySelector('#offline-state').textContent='Saved for offline reading. Your notebook is ready to travel.';
  if(reg.waiting){waitingUpdate=reg.waiting;applyWaitingUpdate();}
- reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){waitingUpdate=reg.waiting;applyWaitingUpdate();}});});
+
  }).catch(()=>{document.querySelector('#offline-state').textContent='Offline saving is unavailable in this browser. You can still read online.';});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!hasDraft())checkUpdates();});
+ window.addEventListener('online',checkUpdates);
+ window.addEventListener('pageshow',()=>{verifyController();checkUpdates();});
  window.addEventListener('hashchange',()=>{applyWaitingUpdate();});
 }
 

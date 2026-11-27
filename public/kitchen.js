@@ -1,3 +1,5 @@
+let stagedRecovery=null;
+export function stageRecovery(value){stagedRecovery=value;}
 import {defaultSections,validateSections} from './sections.js';
 import {saveRecipe,makeBackup,validateBackup,previewMerge,restoreRecipes,getSetting,setSetting} from './storage.js';
 import {encryptBackup,decryptBackup} from './crypto.js';
@@ -28,6 +30,7 @@ export function backupPage(){return `<article class="paper backup"><div class="e
 function download(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}
 export async function bindBackup(current,onRestored,onUpdateCheck,onAutoChange,sectionContext={}){
  const status=document.querySelector('#backup-status');
+ if(stagedRecovery)status.textContent='Recovery snapshot selected. Choose a duplicate policy, then Check file & preview merge.';
  const stamp=()=>new Date().toISOString().slice(0,10);
  document.querySelector('#auto-update').checked=await getSetting('autoUpdate',true);
  document.querySelector('#auto-update').addEventListener('change',async e=>{await setSetting('autoUpdate',e.target.checked);onAutoChange(e.target.checked);});
@@ -40,12 +43,12 @@ export async function bindBackup(current,onRestored,onUpdateCheck,onAutoChange,s
  function invalidate(){pending=[];document.querySelector('#restore-preview').replaceChildren();}
  ['restore-file','import-passphrase','merge-policy'].forEach(id=>document.querySelector('#'+id).addEventListener('change',invalidate));
  document.querySelector('#preview-restore').addEventListener('click',async e=>{e.target.disabled=true;invalidate();try{
- const file=document.querySelector('#restore-file').files[0];if(!file)throw Error('Select a backup file first.');if(file.size>20000000)throw Error('Choose a backup smaller than 20 MB.');
- let value=JSON.parse(await file.text());if(value.format==='recipe-notebook-encrypted')value=await decryptBackup(value,document.querySelector('#import-passphrase').value);
+ const file=document.querySelector('#restore-file').files[0];if(!file&&!stagedRecovery)throw Error('Select a backup file first.');if(file?.size>20000000)throw Error('Choose a backup smaller than 20 MB.');
+ let value=file?JSON.parse(await file.text()):stagedRecovery;if(value.format==='recipe-notebook-encrypted')value=await decryptBackup(value,document.querySelector('#import-passphrase').value);
  const incoming=validateBackup(value);incomingSections=value.sections?validateSections(value.sections):null;pending=previewMerge(current,incoming,document.querySelector('#merge-policy').value);
  const counts=Object.fromEntries(['add','copy','skip','replace'].map(action=>[action,pending.filter(p=>p.action===action).length]));
  document.querySelector('#restore-preview').innerHTML=`<h3>Merge preview</h3><p>${counts.add} new · ${counts.copy} copies · ${counts.skip} skipped · ${counts.replace} replaced</p><ul class="merge-list">${pending.map(p=>`<li>${escape(p.recipe.title)} <strong>${p.action}</strong></li>`).join('')}</ul>${counts.replace?'<label class="check-label"><input type="checkbox" id="approve-overwrite"> I approve replacing the matching recipes listed above.</label>':''}${incomingSections?`<label class="check-label"><input id="restore-layout" type="checkbox"> Restore the section layout from this backup. Recipes outside that layout move to its first section; no recipes are deleted.</label>`:''}<button id="apply-restore" class="primary">Confirm restore</button>`;
- document.querySelector('#apply-restore').addEventListener('click',async event=>{if(counts.replace&&!document.querySelector('#approve-overwrite').checked){status.textContent='Approve replacing the listed recipes before restoring.';return;}event.target.disabled=true;try{const accepted=pending.filter(p=>p.action!=='skip').map(p=>({...p.recipe,id:p.action==='copy'?'local-'+crypto.randomUUID():p.action==='replace'?p.match.id:p.recipe.id}));await restoreRecipes(accepted,document.querySelector('#restore-layout')?.checked?incomingSections:undefined);document.querySelector('#import-passphrase').value='';status.textContent=`Restored ${accepted.length} recipes. ${counts.skip} duplicates kept unchanged.`;pending=[];event.target.remove();await onRestored();}catch{status.textContent='Restore failed. The database transaction did not complete.';event.target.disabled=false;}});
+ document.querySelector('#apply-restore').addEventListener('click',async event=>{if(counts.replace&&!document.querySelector('#approve-overwrite').checked){status.textContent='Approve replacing the listed recipes before restoring.';return;}event.target.disabled=true;try{const accepted=pending.filter(p=>p.action!=='skip').map(p=>({...p.recipe,id:p.action==='copy'?'local-'+crypto.randomUUID():p.action==='replace'?p.match.id:p.recipe.id}));await restoreRecipes(accepted,document.querySelector('#restore-layout')?.checked?incomingSections:undefined);document.querySelector('#import-passphrase').value='';status.textContent=`Restored ${accepted.length} recipes. ${counts.skip} duplicates kept unchanged.`;pending=[];stagedRecovery=null;event.target.remove();await onRestored();}catch{status.textContent='Restore failed. The database transaction did not complete.';event.target.disabled=false;}});
  status.textContent='File checked. Review the merge preview before confirming.';
  }catch(error){status.textContent=error instanceof SyntaxError?'This file is not valid JSON. No data was changed.':error.message;}finally{e.target.disabled=false;}});
 }

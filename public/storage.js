@@ -25,15 +25,26 @@ export async function loadLibrary(bundledOrder=[]){
  const order=new Map(bundledOrder.map((id,index)=>[id,index]));
  return records.sort((a,b)=>(order.get(a.id)??9999)-(order.get(b.id)??9999)||a.updatedAt.localeCompare(b.updatedAt)).map(record=>({...record.recipe,trials:record.recipe.trials||[],local:record.origin==='local',overridden:record.modified}));
 }
+const saveListeners=new Set();
+export const onNotebookSave=listener=>{saveListeners.add(listener);return ()=>saveListeners.delete(listener);};
+async function saved(snapshot){for(const listener of saveListeners){try{await listener(snapshot);}catch{ /* recipe commit remains successful */ }}}
+function recoverySnapshot(tx,captured=()=>{}){
+ const settings=tx.objectStore('settings'),store=tx.objectStore('recipes');
+ const records=store.getAll(),sections=settings.get('sections'),enabled=settings.get('autoRecovery'),prior=settings.get('recoverySnapshots');let remaining=4;
+ const ready=()=>{if(--remaining||enabled.result===false)return;const backup=makeBackup(records.result.map(r=>r.recipe),sections.result);settings.put([backup,...(prior.result||[])].slice(0,2),'recoverySnapshots');captured(backup);};
+ for(const request of [records,sections,enabled,prior])request.onsuccess=ready;
+}
 export async function saveRecipe(recipe){
- await transaction('recipes','readwrite',store=>store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA}));
+ let snapshot;
+ const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');tx.objectStore('recipes').put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});recoverySnapshot(tx,value=>snapshot=value);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});await saved(snapshot);
 }
 export async function restoreRecipes(recipes,sections){
  await saveBookState(recipes,sections);
 }
 export async function saveBookState(recipes,sections){
+ let snapshot;
  const db=await openDatabase();if(sections)validateSections(sections);
- await new Promise((resolve,reject)=>{const tx=db.transaction(sections?['recipes','settings']:['recipes'],'readwrite');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});
+ await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');const store=tx.objectStore('recipes');for(const recipe of recipes)store.put({id:recipe.id,origin:'local',modified:true,recipe,updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});if(sections){tx.objectStore('settings').put(sections,'sections');tx.objectStore('settings').put(2,'sectionOrderVersion');}recoverySnapshot(tx,value=>snapshot=value);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('The book was not saved.'));});await saved(snapshot);
 }
 export async function getSetting(key,fallback){const db=await openDatabase();const value=await result(db.transaction('settings').objectStore('settings').get(key));return value??fallback;}
 export async function setSetting(key,value){await transaction('settings','readwrite',store=>store.put(value,key));}
@@ -57,7 +68,7 @@ export function previewMerge(current,incoming,policy){
  return incoming.map(recipe=>{const match=byId.get(recipe.id)||titles.get(recipe.title.trim().toLowerCase());return {recipe,match,action:!match?'add':policy==='replace'?'replace':policy==='copy'?'copy':'skip'};});
 }
 
-export async function resetRecipe(recipe){const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction('recipes','readwrite');const store=tx.objectStore('recipes');const request=store.get(recipe.id);request.onsuccess=()=>{const trials=request.result?.recipe.trials||[];store.put({id:recipe.id,origin:'bundled',modified:Boolean(trials.length),recipe:{...recipe,trials},updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}
+export async function resetRecipe(recipe){let snapshot;const db=await openDatabase();await new Promise((resolve,reject)=>{const tx=db.transaction(['recipes','settings'],'readwrite');const store=tx.objectStore('recipes');const request=store.get(recipe.id);request.onsuccess=()=>{const trials=request.result?.recipe.trials||[];store.put({id:recipe.id,origin:'bundled',modified:Boolean(trials.length),recipe:{...recipe,trials},updatedAt:new Date().toISOString(),schema:DATA_SCHEMA});recoverySnapshot(tx,value=>snapshot=value);};tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});await saved(snapshot);}
 
 export function orderRecipes(recipes){
  const chapters=['Main','Sides','Desserts'];

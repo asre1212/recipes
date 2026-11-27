@@ -26,3 +26,8 @@ test('student handwriting, trial module and face icons are cached; cover keeps t
  const manifest=JSON.parse(await readFile('public/manifest.webmanifest'));for(const size of [192,512]){const icon=manifest.icons.find(i=>i.sizes===size+'x'+size);const data=await readFile('public/'+icon.src);assert.equal(data.readUInt32BE(16),size);assert.equal(data.readUInt32BE(20),size);}
  const html=await readFile('public/index.html','utf8');assert.match(html,/apple-touch-bear-v2.png/);const css=await readFile('public/student-recipe.css','utf8');assert.match(css,/StudentHand/);assert.match(css,/#f5df5399/);assert.match(css,/a22f30/);
 });
+
+test('all three handwriting fonts are distinct local assets and the menu offers a persisted default reset',async()=>{
+ const {createHash}=await import('node:crypto');const hashes=[];const sw=await readFile('public/sw.js','utf8');for(const file of ['student-hand.woff','kalam-hand.woff','kristi-hand.woff']){const data=await readFile('public/assets/fonts/'+file);assert.equal(data.toString('ascii',0,4),'wOFF');hashes.push(createHash('sha256').update(data).digest('hex'));assert.ok(sw.includes(file));}assert.equal(new Set(hashes).size,3);
+ const html=await readFile('public/index.html','utf8');assert.match(html,/Recipe font/);for(const name of ['Notebook default','Kalam','Kristi'])assert.ok(html.includes(name));const app=await readFile('public/app.js','utf8');assert.match(app,/getSetting\('recipeFont'/);assert.match(app,/setSetting\('recipeFont'/);
+});

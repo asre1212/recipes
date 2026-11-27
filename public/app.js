@@ -2,7 +2,7 @@ import {trialSection,bindTrials} from './trials.js';
 import {defaultSections,arrangeBook} from './sections.js';
 import {contentsPage,bindContents} from './contents.js';
 import {recipes as bundledRecipes} from './recipes.js';
-import {initializeLibrary,loadLibrary,getSetting,resetRecipe,saveBookState,initializeSections} from './storage.js';
+import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe,saveBookState,initializeSections} from './storage.js';
 import {editorPage,bindEditor,backupPage,bindBackup,hasDraft,discardDraft} from './kitchen.js';
 const APP_BUILD='development';
 document.documentElement.dataset.appBuild=APP_BUILD;
@@ -58,9 +58,10 @@ function render() {
 window.addEventListener('hashchange',render);
 window.addEventListener('beforeunload',e=>{if(hasDraft()){e.preventDefault();e.returnValue='';}});
 let autoUpdate=true;
-try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipes.push(...arrangeBook(await initializeLibrary(bundledRecipes),sections));autoUpdate=await getSetting('autoUpdate',true);}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeBook(bundledRecipes,sections));document.querySelector('#storage-warning').hidden=false;}
+try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipes.push(...arrangeBook(await initializeLibrary(bundledRecipes),sections));autoUpdate=await getSetting('autoUpdate',true);const chosen=await getSetting('recipeFont','default');document.documentElement.dataset.recipeFont=['kalam','kristi'].includes(chosen)?chosen:'default';}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeBook(bundledRecipes,sections));document.querySelector('#storage-warning').hidden=false;}
 const menuToggle=document.querySelector('#menu-toggle');
 const notebookMenu=document.querySelector('#notebook-menu');
+const fontPicker=document.querySelector('#recipe-font');fontPicker.value=document.documentElement.dataset.recipeFont||'default';fontPicker.addEventListener('change',async()=>{const selected=['kalam','kristi'].includes(fontPicker.value)?fontPicker.value:'default';document.documentElement.dataset.recipeFont=selected;try{await setSetting('recipeFont',selected);}catch{document.querySelector('#storage-warning').hidden=false;}closeMenu(true);});
 function closeMenu(returnFocus=false){const toggle=document.querySelector('#menu-toggle');document.querySelector('#notebook-menu').hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open notebook menu');if(returnFocus)toggle.focus();}
 menuToggle.addEventListener('click',()=>{const open=notebookMenu.hidden;notebookMenu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'Close notebook menu':'Open notebook menu');});
 notebookMenu.addEventListener('click',event=>{if(event.target.closest('a,button'))closeMenu();});

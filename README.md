@@ -65,3 +65,7 @@ Use **Add a trial** at the bottom of any recipe page. Ingredient / amount and Ou
 The full existing bear on the cover is the Contents link, accessible by pointer or keyboard. Visible cover title/link copy has been removed. The versioned PWA, Apple touch and favicon assets crop only that same bear artwork's face, on ivory with safe padding. No new bear was drawn, and no raw reference photo was published. Physical iOS Home Screen icon refresh is unverified; code updates preserve local data and do not require clearing website storage.
 
 Font: Patrick Hand from the official Google Fonts repository, bundled under OFL; see `public/assets/fonts/PATRICK-HAND-OFL.txt`.
+
+### Recipe Font
+
+The three-line menu offers **Notebook default** (Patrick Hand), **Kalam** and **Kristi**. It changes recipe body handwriting immediately and saves the preference in IndexedDB. Headings and controls stay in the legible notebook default; Kristi uses a larger body size. All three actual font files and OFL licenses are bundled locally and the fonts are cached offline. No font-provider requests run in the app.

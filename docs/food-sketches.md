@@ -11,3 +11,10 @@ Common direction: professional black-and-white graphite pencil drawing, natural 
 - `public/assets/bread-graphite.webp`: Japanese milk bread loaf with three rounded domes, one thick slice forward showing airy fine crumb.
 
 Masters were inspected at 1536 × 1024. PWA assets are optimized transparent WebP at 1024 × 683, suitable for the 340-pixel detail-page placement. CSS enforces neutral grayscale and blends the drawings with the notebook paper. The service worker caches all three.
+
+## Chocolate Pecan Pie and Sourdough characters
+Two original images generated with the built-in image tool from the owner's privately inspected references. Only the new drawings ship; neither reference PNG is included.
+
+Final prompt subjects: a cheerful wide-eyed chicken using a spoon to fill a tray of miniature chocolate-and-pecan pie crusts; and a smiling scored round sourdough boule wearing a chunky knitted scarf and fringed heart-patterned shawl. Both prompts request professional monochrome graphite shading, fine cross-hatching, no words/logos/background, and a transparent cutout. Optimized local WebP assets: `public/assets/pecan-chicken-graphite.webp` and `public/assets/sourdough-scarf-graphite.webp`.
+
+Both use the existing responsive right-of-ingredients side-food layout, with zero tilt. Exact routes are `#recipe/chocolate-pecan-pie` and `#recipe/sourdough`; Chocolate pie dupe and Sourdough Discard Naan are unchanged. The registry is reading-only, and both paths are explicitly precached for offline use.

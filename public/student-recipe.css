@@ -93,3 +93,7 @@ html[data-recipe-font="kristi"] .recipe .ingredients ul{font-size:32px}html[data
 .paper.recipe>.recipe-rules,.recipe .margin-note>.note-rules{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
 .recipe .margin-note>:not(.note-rules){position:relative;z-index:1}
 .recipe .trial-observation{align-items:start}.recipe .trial-arrow{align-self:center}
+
+/* The new chicken's portrait frame uses the full ingredient-side width. */
+.recipe .recipe-grid>.art-side-food:has(img[src$="pecan-chicken-graphite.webp"]){height:calc(var(--side-art)*1.25 + 8px)}
+.recipe .recipe-grid>.art-side-food img[src$="pecan-chicken-graphite.webp"]{height:calc(var(--side-art)*1.25)}

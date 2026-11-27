@@ -53,7 +53,8 @@ const changes={
   "Ladyfinger package size, espresso volume and a separate vanilla-addition step are unspecified. Cream cheese is explicitly written; it has not been changed to mascarpone.": "Ladyfinger package size, espresso volume and when to add vanilla need confirmation."
  },
  "camp-cookies": {
-  "Preheat oven to 175°C; handwritten note: 350°F. Line three baking sheets with parchment paper and set aside.": "Preheat oven to 350°F / 175°C. Line three baking sheets with parchment paper and set aside.",
+  "Preheat oven to 175°C; handwritten note: 350°F. Line three baking sheets with parchment paper and set aside.": "Preheat oven to 350°F. Line three baking sheets with parchment paper and set aside.",
+  "Preheat oven to 350°F / 175°C. Line three baking sheets with parchment paper and set aside.": "Preheat oven to 350°F. Line three baking sheets with parchment paper and set aside.",
   "Handwritten half batch: 250g butter, 250g sugar, 1 egg, 275g flour, 5g baking soda, 2.5g salt and 200g cornflakes.": "Half batch: 250g butter, 250g sugar, 1 egg, 275g flour, 5g baking soda, 2.5g salt and 200g cornflakes.",
   "Cake-flour substitution note: 275g = 234g regular flour + 41g cornstarch.": "Cake-flour substitution: 275g = 234g regular flour + 41g cornstarch.",
   "Cornflakes are noted as “in crust”; a following word is crossed out.": "Cornflakes: in crust.",

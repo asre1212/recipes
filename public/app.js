@@ -11,6 +11,8 @@ const recipes=[];const sections=[];
 const refreshLibrary=async()=>{const savedSections=await getSetting('sections',defaultSections);sections.splice(0,sections.length,...savedSections);const next=await loadLibrary(bundledRecipes.map(r=>r.id));recipes.splice(0,recipes.length,...arrangeBook(next,sections));};
 const saveBook=async(nextRecipes,nextSections)=>{await saveBookState(nextRecipes,nextSections);await refreshLibrary();};
 const book = document.querySelector('#book');
+const header=document.querySelector('.site-header');
+const headerAnchor=document.createComment('Notebook navigation mounts only on paper pages');header.before(headerAnchor);
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pageNumber = recipe => recipes.indexOf(recipe) + 3;
 const footer = (number, previous, next) => `<footer class="page-footer"><a href="${previous}" aria-label="Previous page">Previous</a><a class="page-number" href="#contents" aria-label="Page ${number}. Back to contents">${String(number).padStart(2,'0')}<span>Contents</span></a>${next ? `<a href="${next}" aria-label="Next page">Next</a>` : '<span class="end-note">End of book</span>'}</footer>`;
@@ -34,10 +36,11 @@ function render() {
  const recipe = hash.startsWith('#recipe/') && recipes.find(r=>r.id===hash.slice(8));
  const coverOpen=hash==='#cover';
  document.documentElement.dataset.navigation=coverOpen?'cover':'paper';
- const header=document.querySelector('.site-header');header.hidden=coverOpen;header.inert=coverOpen;
- document.querySelector('#menu-toggle').hidden=coverOpen;
- document.querySelector('#contents-menu-actions').innerHTML=hash==='#contents'?contentsMenu():'';
- const menuActions=document.querySelector('#recipe-menu-actions');
+ header.hidden=coverOpen;header.inert=coverOpen;
+ if(coverOpen)header.remove();else headerAnchor.after(header);
+ header.querySelector('#menu-toggle').hidden=coverOpen;
+ header.querySelector('#contents-menu-actions').innerHTML=hash==='#contents'?contentsMenu():'';
+ const menuActions=header.querySelector('#recipe-menu-actions');
  menuActions.innerHTML=recipe?`<a href="#edit/${escape(recipe.id)}">Edit recipe</a>${recipe.overridden&&bundledRecipes.some(b=>b.id===recipe.id)?'<button id="restore-original">Restore original</button>':''}`:'';
  closeMenu();
  let title;
@@ -55,9 +58,10 @@ function render() {
  else if(recipe) { book.innerHTML=recipePage(recipe); title=recipe.title;bindTrials(recipe,async()=>{await refreshLibrary();render();const trials=document.querySelector('.prior-trials');trials?.scrollIntoView({block:'start'});trials?.focus({preventScroll:true});}); }
  else { book.innerHTML=`<article class="paper missing"><h1>A missing page</h1><p>This recipe isn’t in the notebook yet.</p><a class="open-book" href="#contents">Back to contents</a></article>`; title='Page not found'; }
  document.title=title+' · Recipe';
+ showAppIdentity();
  document.body.dataset.page=hash==='#cover' ? 'cover' : 'paper';
  document.querySelector('meta[name="theme-color"]').content=hash==='#cover'?'#c8b69d':'#ad805a';
- document.querySelectorAll('.site-header a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')===hash));
+ header.querySelectorAll('a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')===hash));
  const reset=document.querySelector('#restore-original');
  if(reset&&recipe)reset.addEventListener('click',async()=>{if(confirm('Restore the supplied recipe text and discard your text edits? Your Prior Trials will be kept.')){try{await resetRecipe(bundledRecipes.find(b=>b.id===recipe.id));await refreshLibrary();render();}catch{alert('Could not restore this recipe. Your existing copy remains saved.');}}});
  window.scrollTo(0,0);
@@ -67,10 +71,10 @@ window.addEventListener('hashchange',render);
 window.addEventListener('beforeunload',e=>{if(hasDraft()){e.preventDefault();e.returnValue='';}});
 let autoUpdate=true;
 try{const savedSections=await initializeSections(await loadLibrary(bundledRecipes.map(r=>r.id)));sections.push(...savedSections);recipes.push(...arrangeBook(await initializeLibrary(bundledRecipes),sections));autoUpdate=await getSetting('autoUpdate',true);const chosen=await getSetting('recipeFont','default');document.documentElement.dataset.recipeFont=['kalam','kristi'].includes(chosen)?chosen:'default';}catch{if(!sections.length)sections.push(...defaultSections);recipes.push(...arrangeBook(bundledRecipes,sections));document.querySelector('#storage-warning').hidden=false;}
-const menuToggle=document.querySelector('#menu-toggle');
-const notebookMenu=document.querySelector('#notebook-menu');
-const fontPicker=document.querySelector('#recipe-font');fontPicker.value=document.documentElement.dataset.recipeFont||'default';fontPicker.addEventListener('change',async()=>{const selected=['kalam','kristi'].includes(fontPicker.value)?fontPicker.value:'default';document.documentElement.dataset.recipeFont=selected;try{await setSetting('recipeFont',selected);}catch{document.querySelector('#storage-warning').hidden=false;}closeMenu(true);});
-function closeMenu(returnFocus=false){const toggle=document.querySelector('#menu-toggle');document.querySelector('#notebook-menu').hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open notebook menu');if(returnFocus)toggle.focus();}
+const menuToggle=header.querySelector('#menu-toggle');
+const notebookMenu=header.querySelector('#notebook-menu');
+const fontPicker=header.querySelector('#recipe-font');fontPicker.value=document.documentElement.dataset.recipeFont||'default';fontPicker.addEventListener('change',async()=>{const selected=['kalam','kristi'].includes(fontPicker.value)?fontPicker.value:'default';document.documentElement.dataset.recipeFont=selected;try{await setSetting('recipeFont',selected);}catch{document.querySelector('#storage-warning').hidden=false;}closeMenu(true);});
+function closeMenu(returnFocus=false){const toggle=header.querySelector('#menu-toggle');header.querySelector('#notebook-menu').hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open notebook menu');if(returnFocus)toggle.focus();}
 menuToggle.addEventListener('click',()=>{const open=notebookMenu.hidden;notebookMenu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'Close notebook menu':'Open notebook menu');});
 notebookMenu.addEventListener('click',event=>{if(event.target.closest('a,button'))closeMenu();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!notebookMenu.hidden){closeMenu(true);event.preventDefault();}});
@@ -78,11 +82,11 @@ document.addEventListener('click',event=>{if(!event.target.closest('.site-header
 document.addEventListener('focusin',event=>{if(!notebookMenu.hidden&&!event.target.closest('.site-header'))closeMenu();});
 startAutoBackup();
 render();
-const help=document.querySelector('#install-help');
+const help=header.querySelector('#install-help');
 help.addEventListener('click',()=>{const guide=document.querySelector('#install-guide');guide.hidden=!guide.hidden;help.setAttribute('aria-expanded',String(!guide.hidden));});
 let installPrompt;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.querySelector('#install').hidden=false;});
-document.querySelector('#install').addEventListener('click',async()=>{if(!installPrompt)return;await installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;document.querySelector('#install').hidden=true;});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;header.querySelector('#install').hidden=false;});
+header.querySelector('#install').addEventListener('click',async()=>{if(!installPrompt)return;await installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;header.querySelector('#install').hidden=true;});
 let registration;let waitingUpdate;let refreshing=false;let deferredReload=false;
 function applyWaitingUpdate(){
  if(hasDraft()||document.querySelector('#recipe-form,#trial-form'))return;
@@ -92,10 +96,11 @@ function applyWaitingUpdate(){
  document.querySelector('#update-message').textContent='A new notebook version is ready. Your local recipes are saved.';
  if(autoUpdate)waitingUpdate.postMessage({type:'SKIP_WAITING'});
 }
+function showAppIdentity(workerBuild){const info=document.querySelector('#app-identity');if(!info)return;info.textContent='App build: '+APP_BUILD+' · '+(navigator.standalone||matchMedia('(display-mode: standalone)').matches?'Home Screen / standalone':'browser tab')+'\nAddress: '+location.origin+location.pathname+'\nRoute: '+(location.hash||'#cover')+'\nOffline worker: '+(workerBuild||'checking…');const worker=navigator.serviceWorker?.controller;if(worker&&!workerBuild){const channel=new MessageChannel();channel.port1.onmessage=e=>{channel.port1.close();showAppIdentity(e.data?.build||'unreported');};worker.postMessage({type:'GET_BUILD'},[channel.port2]);}else if(!worker)info.textContent=info.textContent.replace('checking…','not controlling this page');}
 async function checkUpdates(){
  const status=document.querySelector('#update-status');
  if(!registration){if(status)status.textContent='App updates need an HTTPS browser connection with service-worker support.';return;}
- try{await registration.update();if(registration.waiting){waitingUpdate=registration.waiting;applyWaitingUpdate();if(status)status.textContent='Update ready. It will apply when no recipe editor is open.';}else if(status)status.textContent=registration.installing?'Downloading the app update…':'You have the latest available app version.';}catch{if(status)status.textContent='Could not check right now. Open the app online and try again.';}
+ try{showAppIdentity();await registration.update();if(registration.waiting){waitingUpdate=registration.waiting;applyWaitingUpdate();if(status)status.textContent='Update ready. It will apply when no recipe editor is open.';}else if(status)status.textContent=registration.installing?'Downloading the app update…':'You have the latest available app version.';}catch{if(status)status.textContent='Could not check right now. Open the app online and try again.';}
 }
 document.querySelector('#apply-update').addEventListener('click',()=>{if(!hasDraft()&&!document.querySelector('#recipe-form,#trial-form'))waitingUpdate?.postMessage({type:'SKIP_WAITING'});});
 if('serviceWorker' in navigator){

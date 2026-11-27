@@ -2,15 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {indexedDB} from 'fake-indexeddb';
 globalThis.indexedDB=indexedDB;
-import {initializeLibrary,initializeSections,saveRecipe,getSetting,validateBackup,restoreRecipes,loadLibrary} from '../public/storage.js';
+import {initializeLibrary,initializeSections,saveRecipe,getSetting,setSetting,makeBackup,validateBackup,restoreRecipes,loadLibrary} from '../public/storage.js';
 import {rotateFolder,serializeBackup} from '../public/autobackup.js';
 import {recipes} from '../public/recipes.js';
-test('each save atomically rotates exactly two lossless recovery snapshots, including trials, and restores safely',async()=>{
+test('upgrade preserves older recovery copies but never creates new browser snapshots even with legacy enabled setting',async()=>{
  await initializeLibrary(recipes);await initializeSections(recipes);
- const r=structuredClone(recipes[0]);r.ingredients[0][0]='test amount';r.trials=[{id:'trial-qa',ingredient:'1 cup sugar',outcome:'too sweet'}];await saveRecipe(r);
- r.notes.push('second revision');await saveRecipe(r);r.ingredients.splice(1,1);await saveRecipe(r);
- const snapshots=await getSetting('recoverySnapshots');assert.equal(snapshots.length,2);const latest=validateBackup(snapshots[0]),previous=validateBackup(snapshots[1]);assert.equal(latest.find(x=>x.id===r.id).ingredients.length,previous.find(x=>x.id===r.id).ingredients.length-1);assert.deepEqual(latest.find(x=>x.id===r.id).trials,r.trials);
- await restoreRecipes(previous);assert.deepEqual((await loadLibrary()).find(x=>x.id===r.id).ingredients,previous.find(x=>x.id===r.id).ingredients);
+ const prior=[makeBackup(recipes),makeBackup(recipes)];await setSetting('recoverySnapshots',prior);await setSetting('autoRecovery',true);
+ const r=structuredClone(recipes[0]);r.ingredients[0][0]='test amount';r.trials=[{id:'trial-qa',ingredient:'1 cup sugar',outcome:'too sweet'}];await saveRecipe(r);r.notes.push('second revision');await saveRecipe(r);
+ assert.deepEqual(await getSetting('recoverySnapshots'),prior);assert.deepEqual((await loadLibrary()).find(x=>x.id===r.id).trials,r.trials);
+ await restoreRecipes(validateBackup(prior[0]));assert.deepEqual(await getSetting('recoverySnapshots'),prior);assert.deepEqual((await loadLibrary()).find(x=>x.id===r.id).ingredients,recipes[0].ingredients);
 });
 test('folder writes verify newest before pruning only tracked app files; failures never prune',async()=>{
  const files=new Map([['unrelated.json','private']]);const removed=[];let fail=false;

@@ -6,7 +6,7 @@ import {encryptBackup,decryptBackup} from '../public/crypto.js';
 const recipe={id:'trial-bundled',title:'Old supplied recipe',category:'Desserts',cuisine:null,ingredients:[['1 cup','sugar']],steps:['Mix.'],notes:[],unspecified:'Bake time unspecified.',source:'internal-source.jpeg'};
 test('trial entries support independent ingredient and outcome fields, multiple entries, stable editing and removal',()=>{
  let entries=changeTrials([],null,'1 cup sugar','too sweet');entries=changeTrials(entries,null,'¾ cup sugar','Better\nKeep this amount.');assert.equal(entries.length,2);const id=entries[0].id;entries=changeTrials(entries,id,'½ cup sugar','less sweet');assert.equal(entries[0].id,id);assert.equal(entries[0].outcome,'less sweet');entries=entries.filter(t=>t.id!==id);assert.equal(entries.length,1);assert.throws(()=>changeTrials([],null,'','outcome'));assert.throws(()=>changeTrials([],null,'sugar',''));
- const html=trialSection({...recipe,trials:[{id:'safe',ingredient:'<script>',outcome:'A < B'}]});assert.ok(!html.includes('<script>'));assert.match(html,/&lt;script&gt;/);assert.match(html,/trial-arrow/);assert.match(trialSection(recipe),/No trials yet/);assert.ok(!trialSection(recipe).includes('1 cup sugar'));
+ const html=trialSection({...recipe,trials:[{id:'safe',ingredient:'<script>',outcome:'A < B'}]});assert.ok(!html.includes('<script>'));assert.match(html,/&lt;script&gt;/);assert.match(html,/trial-arrow/);assert.doesNotMatch(trialSection(recipe),/No trials yet/);assert.match(trialSection(recipe),/Add a trial/);assert.ok(!trialSection(recipe).includes('1 cup sugar'));
 });
 test('older backups load without trials; malformed or duplicate trials reject before a restore',()=>{
  assert.deepEqual(validateBackup(makeBackup([recipe]))[0].trials,[]);

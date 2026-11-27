@@ -1,6 +1,6 @@
 import {trialSection,bindTrials} from './trials.js';
 import {defaultSections,arrangeBook} from './sections.js';
-import {contentsPage,bindContents} from './contents.js';
+import {contentsPage,bindContents,contentsMenu} from './contents.js';
 import {recipes as bundledRecipes} from './recipes.js';
 import {initializeLibrary,loadLibrary,getSetting,setSetting,resetRecipe,saveBookState,initializeSections} from './storage.js';
 import {editorPage,bindEditor,backupPage,bindBackup,hasDraft,discardDraft} from './kitchen.js';
@@ -31,6 +31,8 @@ function render() {
  currentHash=location.hash||'#cover';
  const hash = location.hash || '#cover';
  const recipe = hash.startsWith('#recipe/') && recipes.find(r=>r.id===hash.slice(8));
+ document.querySelector('#menu-toggle').hidden=hash==='#cover';
+ document.querySelector('#contents-menu-actions').innerHTML=hash==='#contents'?contentsMenu():'';
  const menuActions=document.querySelector('#recipe-menu-actions');
  menuActions.innerHTML=recipe?`<a href="#edit/${escape(recipe.id)}">Edit recipe</a>${recipe.overridden&&bundledRecipes.some(b=>b.id===recipe.id)?'<button id="restore-original">Restore original</button>':''}`:'';
  closeMenu();
@@ -49,6 +51,7 @@ function render() {
  else { book.innerHTML=`<article class="paper missing"><h1>A missing page</h1><p>This recipe isn’t in the notebook yet.</p><a class="open-book" href="#contents">Back to contents</a></article>`; title='Page not found'; }
  document.title=title+' · Recipe';
  document.body.dataset.page=hash==='#cover' ? 'cover' : 'paper';
+ document.querySelector('meta[name="theme-color"]').content=hash==='#cover'?'#c8b69d':'#ad805a';
  document.querySelectorAll('.site-header a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')===hash));
  const reset=document.querySelector('#restore-original');
  if(reset&&recipe)reset.addEventListener('click',async()=>{if(confirm('Restore the supplied recipe text and discard your text edits? Your Prior Trials will be kept.')){try{await resetRecipe(bundledRecipes.find(b=>b.id===recipe.id));await refreshLibrary();render();}catch{alert('Could not restore this recipe. Your existing copy remains saved.');}}});

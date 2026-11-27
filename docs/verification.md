@@ -78,3 +78,11 @@ was in production. Reorder mode exposed 26 handles, six drop zones and the secti
 form; leaving with Done made no recipe moves. The live bundled editor opened and
 cancelled correctly. The final cover adjustment uses a single continuous kraft
 background for header and cover and keeps the bear centered across aspect ratios.
+
+
+The final live cache identity check exposed an HTTP-cache regression: precaching
+unversioned URLs could reuse an earlier script response. Installation now fetches
+every asset with the release cache ID in its URL and `cache: no-store`, then stores
+it under the canonical offline URL. The offline test asserts this bypass for every
+precache request. A failed asset download rejects installation rather than claiming
+a complete update. This does not touch IndexedDB owner records or settings.

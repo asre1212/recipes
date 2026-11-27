@@ -21,3 +21,8 @@ Professional cookbook margin illustration. Two overlapping irregular oval naan f
 
 ## Spring roll shrimp
 Professional cookbook margin illustration. Three slender crisp fried shrimp spring rolls, visible shrimp tails emerging from pastry wrappers, realistic textures. Meticulous monochrome graphite pencil, natural proportions, fine varied strokes, subtle cross-hatching and soft graded shading. Light airy isolated food drawing on genuinely transparent background. No plate, cutlery, text, colored pigment, heavy outline or scenery. Compact square 1024x1024 composition with clear breathing room around the complete subject.
+
+## CAMP COOKIES — two elephants
+Asset: `public/assets/camp-elephants-graphite.webp`. Original shaded graphite interpretation of the owner's private two-elephant photo; the source photo is not published. Built-in image-generation tool prompt:
+
+Original small cookbook graphite pencil sketch based on the two elephants in this reference photo. Show BOTH Asian elephants close together facing the viewer: a larger elephant on the right/front, broad ears, curled trunk holding a small bundle of grass; smaller elephant on the left slightly behind, trunk hanging with tip curled inward. Natural proportions, gentle expressive faces, finely observed wrinkles, soft graded graphite shading and varied delicate pencil strokes. Isolate just the pair and tiny grass bundle, no landscape, sky, people or background ground clutter. Entirely black and white pencil, no colored pigment, text, logo or watermark. Full elephant silhouettes with feet visible, airy transparent background, compact square composition with ample clear edges. This is a new hand-drawn interpretation, not a photograph or photo cutout.
